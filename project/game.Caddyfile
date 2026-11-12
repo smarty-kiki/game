@@ -1,0 +1,6 @@
+game.yao-yang.cn {
+    tls 378031327@qq.com
+    root * /var/www/game/site
+    file_server
+    encode gzip
+}
