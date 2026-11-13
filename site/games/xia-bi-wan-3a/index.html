@@ -45206,7 +45206,7 @@ void main() {
 
     function v() {
       for (let P in o) o[P].clear();
-      n.clear(), u = 0, j = !1, M && (M.btn.ads.classList.remove("active"), ie(), q = -1, D = -1)
+      n.clear(), u = 0, j = !1, M && (M.btn.ads.classList.remove("active"), ie(), q = null, D = null)
     }
     addEventListener("keydown", P => {
       let V = h_[P.code];
@@ -45288,15 +45288,15 @@ void main() {
     }
     let M = null,
       E = 0,
-      w = -1,
+      w = null,
       S = 0,
       z = 0,
       H = 0,
       O = 0,
-      q = -1,
+      q = null,
       U = 0,
       T = 0,
-      D = -1,
+      D = null,
       C = 0,
       G = 0,
       j = !1;
@@ -45363,7 +45363,7 @@ void main() {
               let fe = !1;
               for (let le of oe.changedTouches) le.identifier === D && (fe = !0);
               if (!fe) return;
-              D = -1
+              D = null
             }
             Z.classList.remove("active"), d("touch", L, !1)
           }
@@ -45395,7 +45395,7 @@ void main() {
     }
 
     function ie() {
-      w = -1, H = O = 0, M && M.stick.classList.remove("on")
+      w = null, H = O = 0, M && M.stick.classList.remove("on")
     }
     addEventListener("touchstart", () => {
       E = performance.now(), K()
@@ -45410,7 +45410,7 @@ void main() {
             _lim = (_rot ? innerHeight : innerWidth) * .45,
             _x = __rx(V),
             _y = __ry(V);
-          if (_x < _lim && w < 0) {
+          if (_x < _lim && w === null) {
             w = V.identifier, S = _x, z = _y, H = O = 0, M && (M.stick.style.transform = `translate3d(${S}px,${z}px,0)`, M.nub.style.transform = "translate3d(0,0,0)", M.stick.classList.add("on"));
             _dbg && _dbg.log("stick-start", {
               id: V.identifier,
@@ -45419,7 +45419,7 @@ void main() {
               lim: Math.round(_lim),
               rot: _rot
             })
-          } else if (q < 0) {
+          } else if (q === null) {
             q = V.identifier, U = V.clientX, T = V.clientY;
             _dbg && _dbg.log("look-start", {
               id: V.identifier,
@@ -45473,7 +45473,7 @@ void main() {
       for (let V of P.changedTouches) window.__x3aDebug && window.__x3aDebug.log("touch-end", {
         id: V.identifier,
         was: V.identifier === w ? "stick" : V.identifier === q ? "look" : null
-      }), V.identifier === w ? ie() : V.identifier === q && (q = -1)
+      }), V.identifier === w ? ie() : V.identifier === q && (q = null)
     };
     e.addEventListener("touchend", F, {
       passive: !1
@@ -45538,7 +45538,7 @@ void main() {
         Y = 0,
         L = !1;
       if (r) {
-        V = (n.has("right") ? 1 : 0) - (n.has("left") ? 1 : 0), Y = (n.has("forward") ? 1 : 0) - (n.has("back") ? 1 : 0), L = n.has("sprint"), w >= 0 && (V += H, Y += O, Math.hypot(H, O) > .93 && O > .8 && (L = !0)), V += re, Y += $;
+        V = (n.has("right") ? 1 : 0) - (n.has("left") ? 1 : 0), Y = (n.has("forward") ? 1 : 0) - (n.has("back") ? 1 : 0), L = n.has("sprint"), w !== null && (V += H, Y += O, Math.hypot(H, O) > .93 && O > .8 && (L = !0)), V += re, Y += $;
         let Z = Math.hypot(V, Y);
         Z > 1 && (V /= Z, Y /= Z);
         let J = (n.has("turnR") ? 1 : 0) - (n.has("turnL") ? 1 : 0),
@@ -45547,7 +45547,7 @@ void main() {
       }
       f.move.x = V, f.move.y = Y, f.fire = r && n.has("fire"), f.ads = r && (n.has("ads") || j), f.sprint = r && L, f.crouch = r && n.has("crouch"), window.__x3aDebug && window.__x3aDebug.throttled("input", 500, "input", {
         on: r,
-        stick: w >= 0 ? [Math.round(H * 100) / 100, Math.round(O * 100) / 100] : null,
+        stick: w !== null ? [Math.round(H * 100) / 100, Math.round(O * 100) / 100] : null,
         pad: [Math.round(re * 100) / 100, Math.round($ * 100) / 100],
         keys: [...n],
         move: [Math.round(V * 100) / 100, Math.round(Y * 100) / 100],
