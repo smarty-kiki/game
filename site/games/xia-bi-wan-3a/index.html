@@ -36677,7 +36677,7 @@ float metalnessFactor = metalness * slORM.b;
         zone: q,
         type: "air"
       }),
-      y = [g(-19, -1.4, "yard"), g(3.5, -1.6, "yard"), g(14.2, 16.4, "yard"), g(-3.2, 16.6, "yard"), g(-16, 26, "yard"), g(6, 26, "yard"), g(4.2, -5.12, "yard"), g(-7.8, 21.4, "yard"), g(-11.3, 12.5, "yard"), g(17.5, 22.2, "yard"), x(10, 11, 23.5, "yard"), x(2, 11, 21.5, "yard"), x(13, 9, 11, "yard"), x(-4, 12.5, -4.5, "yard"), x(9, 10, 1.5, "yard"), x(-10, 12, 24.5, "yard"), g(-12.4, -24.8, "shed"), g(9.6, -25.3, "shed"), g(-13.4, -19.6, "shed"), g(4.6, -13.8, "shed"), g(-21, -27.2, "shed"), g(-18.6, -22, "shed"), g(13.6, -24, "shed"), g(-26.6, -15, "shed"), x(-8, 5.4, -20.5, "shed"), x(5, 5.2, -18, "shed"), x(-20, 10.5, -20, "shed"), x(14.5, 10, -22, "shed"), x(-2, 12.5, -8.5, "shed"), g(27.7, -24.2, "quay"), g(18.3, -25.4, "quay"), g(27.2, -12.6, "quay"), g(20.2, 14, "quay"), g(23.4, 23.2, "quay"), g(18, 24.4, "quay"), g(27.4, 11.6, "quay"), x(36, 9, 4, "quay"), x(38, 11, -6, "quay"), x(35, 8.5, 16, "quay"), x(24, 12.5, 10.5, "quay"), x(33.5, 10, 24.5, "quay"), x(22, 13, -14, "quay")],
+      y = [g(-19, -1.4, "yard"), g(3.5, -1.6, "yard"), g(14.2, 16.4, "yard"), g(-3.2, 16.6, "yard"), g(-16, 26, "yard"), g(6, 26, "yard"), g(4.2, -5.12, "yard"), g(-7.8, 21.4, "yard"), g(-11.3, 12.5, "yard"), g(17.5, 22.2, "yard"), x(10, 11, 23.5, "yard"), x(2, 11, 21.5, "yard"), x(13, 9, 11, "yard"), x(-4, 12.5, -4.5, "yard"), x(9, 10, 1.5, "yard"), x(-10, 12, 24.5, "yard"), g(-12.4, -24.8, "shed"), g(9.6, -25.3, "shed"), g(-13.4, -19.6, "shed"), g(4.6, -13.8, "shed"), g(-21, -27.2, "shed"), g(-18.6, -22, "shed"), g(13.6, -24, "shed"), g(-26.6, -15, "shed"), x(-8, 5.4, -20.5, "shed"), x(5, 5.2, -18, "shed"), x(-20, 10.5, -20, "shed"), x(14.5, 10, -22, "shed"), x(-2, 12.5, -8.5, "shed"), g(27.7, -24.2, "quay"), g(18.3, -25.4, "quay"), g(27.2, -12.6, "quay"), g(20.2, 14, "quay"), g(23.4, 23.2, "quay"), g(18, 24.4, "quay"), g(27.4, 11.6, "quay"), x(28, 9, 4, "quay"), x(26, 11, -6, "quay"), x(28, 8.5, 16, "quay"), x(24, 12.5, 10.5, "quay"), x(28, 10, 24.5, "quay"), x(22, 13, -14, "quay")],
       b = [{
         name: "gate",
         min: [-40, -30],
@@ -48453,7 +48453,7 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
         }), m && (d.vel.addScaledVector(m, Math.min(3, y * .09)), d.roll += (o() - .5) * .5, d.pitch += (o() - .5) * .4), i.provoke(d), d.hp <= 0 ? (v(m), !0) : !1) : !1
       },
       _activate(y, b = {}) {
-        d.active = !0, d.alive = !0, d.hp = Pn.hp, d.passive = !!b.passive, d.pos.copy(y), d.home.copy(y), d.vel.set(0, 0, 0), d.yaw = b.yaw ?? o() * 6.283, d.pitch = d.roll = 0, d.mode = b.state === "alert" ? "investigate" : "patrol", d.modeT = 8, d.lastKnown.copy(b.target || (s.player ? s.player.pos : y)), d.los = !1, d.seeT = d.noSeeT = 0, d.exposure = 0, d.senseT = o() * .2, d.hasToken = !1, d.orbitDir = o() < .5 ? 1 : -1, d.orbitR = Pn.rangeMin + 2 + o() * (Pn.rangeMax - Pn.rangeMin - 5), d.alt = b.hover ?? Pn.altMin + .8 + o() * (Pn.altMax - Pn.altMin - 1.6), d.hoverFixed = b.hover != null, d.patrolR = b.patrolRadius ?? 4 + o() * 5, d.phase = o() * 6.283, d.orbitA = o() * 6.283, d.ceil = 1e9, d.flipT = 3 + o() * 4, d.atk = "idle", d.cool = 1 + o() * 1.5, d.dieT = 0, d.spin = 0, d.lostRotor = -1, d.flare = 0, d.thr = 1;
+        d.active = !0, d.alive = !0, d.hp = Pn.hp, d.passive = !!b.passive, d.pos.set(bl(y.x, oi.min.x + 3.5, oi.quayX - 1), y.y, bl(y.z, oi.min.z + 2.5, oi.max.z - 2.5)), d.home.copy(d.pos), d.vel.set(0, 0, 0), d.yaw = b.yaw ?? o() * 6.283, d.pitch = d.roll = 0, d.mode = b.state === "alert" ? "investigate" : "patrol", d.modeT = 8, d.lastKnown.copy(b.target || (s.player ? s.player.pos : y)), d.los = !1, d.seeT = d.noSeeT = 0, d.exposure = 0, d.senseT = o() * .2, d.hasToken = !1, d.orbitDir = o() < .5 ? 1 : -1, d.orbitR = Pn.rangeMin + 2 + o() * (Pn.rangeMax - Pn.rangeMin - 5), d.alt = b.hover ?? Pn.altMin + .8 + o() * (Pn.altMax - Pn.altMin - 1.6), d.hoverFixed = b.hover != null, d.patrolR = b.patrolRadius ?? 4 + o() * 5, d.phase = o() * 6.283, d.orbitA = o() * 6.283, d.ceil = 1e9, d.flipT = 3 + o() * 4, d.atk = "idle", d.cool = 1 + o() * 1.5, d.dieT = 0, d.spin = 0, d.lostRotor = -1, d.flare = 0, d.thr = 1;
         for (let m = 0; m < 4; m++) l["rotor" + m].scale.setScalar(1);
         if (l.lamp.scale.setScalar(1), l.body.rotation.set(0, 0, 0), a.group.visible = !0, a.group.rotation.set(0, d.yaw, 0), s.audio && s.audio.loop && !d.loop) try {
           d.loop = s.audio.loop("gull_rotor", {
@@ -48538,7 +48538,7 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
         let P = d.atk !== "idle";
         d.flipT -= y, d.flipT <= 0 && (d.flipT = 3 + o() * 5, o() < .6 && (d.orbitDir = -d.orbitDir), d.orbitR = bl(d.orbitR + (o() - .5) * 6, Pn.rangeMin + 1, Pn.rangeMax - 2)), d.noSeeT > 1.5 ? (E = d.lastKnown.x, S = d.lastKnown.z, w = d.lastKnown.y + d.alt + 1, d.orbitA = Math.atan2(d.pos.z - d.lastKnown.z, d.pos.x - d.lastKnown.x)) : (d.orbitA += d.orbitDir * (P ? .9 : 3.6) / d.orbitR * y, E = b.pos.x + Math.cos(d.orbitA) * d.orbitR, S = b.pos.z + Math.sin(d.orbitA) * d.orbitR, w = b.pos.y + d.alt)
       } else d.mode === "investigate" || d.mode === "search" ? (M = 5.5, d.orbitA += .5 * y, E = d.lastKnown.x + Math.cos(d.orbitA) * 4.5, S = d.lastKnown.z + Math.sin(d.orbitA) * 4.5, w = d.lastKnown.y + Math.min(d.alt, 5.5)) : (d.orbitA += .28 * y * d.orbitDir, E = d.home.x + Math.cos(d.orbitA) * d.patrolR, S = d.home.z + Math.sin(d.orbitA) * d.patrolR, w = d.hoverFixed ? d.alt : d.home.y);
-      w > d.ceil && (w = d.ceil), !d.hoverFixed && w < 2.2 && (w = 2.2), Co.set((E - d.pos.x) * 2.2 - d.vel.x * 2.4, (w - d.pos.y) * 5 - d.vel.y * 3.6, (S - d.pos.z) * 2.2 - d.vel.z * 2.4), d.feeler = (d.feeler + 1) % 3;
+      E = bl(E, oi.min.x + 3.5, oi.quayX - 1), S = bl(S, oi.min.z + 2.5, oi.max.z - 2.5), w > d.ceil && (w = d.ceil), !d.hoverFixed && w < 2.2 && (w = 2.2), Co.set((E - d.pos.x) * 2.2 - d.vel.x * 2.4, (w - d.pos.y) * 5 - d.vel.y * 3.6, (S - d.pos.z) * 2.2 - d.vel.z * 2.4), d.feeler = (d.feeler + 1) % 3;
       let z = Math.hypot(d.vel.x, d.vel.z);
       if (d.feeler === 0 && z > .6) {
         Bs.set(d.vel.x / z, 0, d.vel.z / z);
@@ -48570,7 +48570,7 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
         let Z = s.physics.raycast(d.pos, Bs, Math.abs(V) * y + L);
         Z && (d.vel.setComponent(P, -V * .25), d.avoid.setComponent(P, d.avoid.getComponent(P) - Y * 8), Z.dist < L && d.pos.setComponent(P, d.pos.getComponent(P) - Y * (L - Z.dist)))
       }
-      if (d.pos.addScaledVector(d.vel, y), !d.hoverFixed) {
+      if (d.pos.addScaledVector(d.vel, y), d.pos.x = bl(d.pos.x, oi.min.x + 3.5, oi.quayX - 1), d.pos.z = bl(d.pos.z, oi.min.z + 2.5, oi.max.z - 2.5), !d.hoverFixed) {
         let P = s.physics.groundHeight(d.pos.x, d.pos.z, d.pos.y + .5) + 1.1;
         d.pos.y < P && (d.pos.y = P, d.vel.y < 0 && (d.vel.y = 0))
       }
@@ -48612,7 +48612,7 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
       let ee = A ? UC : ym,
         B = 1 + d.flare * 3.2 + (A ? 0 : Math.sin(m * 3 + d.phase) * .15);
       for (let P = 0; P < 3; P++) d.lensC[P] += (ee[P] - d.lensC[P]) * (1 - Math.exp(-8 * y));
-      if (r.color.setRGB(d.lensC[0] * B, d.lensC[1] * B, d.lensC[2] * B), d.flare = Math.max(0, d.flare - y * 1.5), d.muzzle.set(0, -.12, .17).applyAxisAngle(Hf, d.yaw).add(d.pos), d.cool -= y, d.atk === "idle") A && d.los && d.cool <= 0 && b && b.alive && Math.abs(U) < .35 && d.pos.distanceTo(b.pos) < Pn.fireRange && i.requestToken(d) && (d.atk = "tele", d.atkT = Pn.telegraph, s.events.emit("enemy:telegraph", {
+      if (r.color.setRGB(d.lensC[0] * B, d.lensC[1] * B, d.lensC[2] * B), d.flare = Math.max(0, d.flare - y * 1.5), d.muzzle.set(0, -.12, .17).applyAxisAngle(Hf, d.yaw).add(d.pos), d.cool -= y, d.atk === "idle") A && d.los && d.cool <= 0 && b && b.alive && Math.abs(U) < .35 && d.pos.distanceTo(b.pos) < Pn.fireRange && b.eye && s.physics.lineOfSight(b.eye, d.pos) && i.requestToken(d) && (d.atk = "tele", d.atkT = Pn.telegraph, s.events.emit("enemy:telegraph", {
         enemy: d,
         type: "gull",
         time: Pn.telegraph,
@@ -48620,7 +48620,10 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
       }));
       else if (d.atk === "tele") d.atkT -= y, d.flare = Math.min(1, d.flare + y * 4.5), A ? d.atkT <= 0 && (d.atk = "burst", d.shots = Pn.burst, d.atkT = 0, d.lead = .2 + o() * .65) : (d.atk = "idle", i.releaseToken(d));
       else if (d.atk === "burst" && (d.atkT -= y, d.flare = 1, d.atkT <= 0)) {
-        if (d.atkT = Pn.burstGap, d.shots--, b) {
+        if (d.atkT = Pn.burstGap, d.shots--, b)
+          if (b.eye && !s.physics.lineOfSight(b.eye, d.pos))
+            d.atk = "idle", d.cool = Pn.cooldown[0] + o() * (Pn.cooldown[1] - Pn.cooldown[0]), i.releaseToken(d);
+          else {
           let P = d.muzzle.distanceTo(b.pos),
             V = P / Pn.boltSpeed;
           ou.set(b.pos.x + b.vel.x * V * d.lead, b.pos.y + 1.05, b.pos.z + b.vel.z * V * d.lead), Bs.copy(ou).sub(d.muzzle).normalize();
