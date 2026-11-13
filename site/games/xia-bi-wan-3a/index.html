@@ -368,191 +368,6 @@ html.is-rotated.is-touch .h-compass { width: min(300px, calc(100vh - var(--gl) -
     <div class="boot-bar"><i id="boot-fill"></i></div>
   </div>
 </div>
-<script>/* ================= x3a mobile diagnostics (temporary) =================
-   Records touch / rotation / input / movement / fps data on real devices.
-   Pause the game (暂停) and press “复制诊断日志” to copy everything as text.
-   Self-contained; does not alter gameplay logic. ======================= */
-(() => {
-  const MAX = 3000;
-  const KEY = "x3a-diag";
-  const logs = [];
-  let dirty = !1;
-  const last = Object.create(null);
-  const t0 = performance.now();
-  const round = (n, d = 2) => Math.round(n * 10 ** d) / 10 ** d;
-  const safe = fn => {
-    try {
-      return fn()
-    } catch {
-      return null
-    }
-  };
-  const env = () => ({
-    ua: navigator.userAgent,
-    platform: navigator.platform,
-    dpr: round(devicePixelRatio, 2),
-    vw: innerWidth,
-    vh: innerHeight,
-    screen: [screen.width, screen.height],
-    orient: safe(() => [screen.orientation.type, screen.orientation.angle]),
-    vv: safe(() => visualViewport && [Math.round(visualViewport.width), Math.round(visualViewport.height), round(visualViewport.scale, 2), Math.round(visualViewport.offsetTop), Math.round(visualViewport.offsetLeft)]),
-    coarse: matchMedia("(pointer: coarse)").matches,
-    hover: matchMedia("(hover: hover)").matches,
-    touchPts: navigator.maxTouchPoints,
-    rotated: document.documentElement.classList.contains("is-rotated"),
-    touchMode: document.documentElement.classList.contains("is-touch"),
-    app: safe(() => {
-      const a = document.getElementById("app");
-      return a ? [a.style.width, a.style.height, a.style.transform] : null
-    }),
-    fs: !!document.fullscreenElement,
-    vis: document.visibilityState
-  });
-  const dbg = window.__x3aDebug = {
-    logs,
-    env,
-    log(ev, d) {
-      const e = {
-        t: Math.round(performance.now() - t0),
-        ev
-      };
-      d !== void 0 && (e.d = d);
-      logs.push(e);
-      logs.length > MAX && logs.splice(0, logs.length - MAX);
-      dirty = !0
-    },
-    throttled(key, ms, ev, d) {
-      const t = performance.now();
-      if (t - (last[key] || -1e9) < ms) return;
-      last[key] = t;
-      this.log(ev, d)
-    },
-    text() {
-      const head = `x3a-diag ${new Date().toISOString()} viewport=${innerWidth}x${innerHeight}\n` + JSON.stringify(env()) + "\n";
-      return head + logs.map(e => `${e.t}\t${e.ev}\t${e.d === void 0 ? "" : JSON.stringify(e.d)}`).join("\n")
-    },
-    async copyToClipboard() {
-      const text = this.text();
-      try {
-        await navigator.clipboard.writeText(text);
-        return "clipboard"
-      } catch {
-        try {
-          const ta = document.createElement("textarea");
-          ta.value = text, ta.setAttribute("readonly", ""), ta.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0", document.body.appendChild(ta), ta.focus(), ta.select();
-          const ok = document.execCommand("copy");
-          return ta.remove(), ok ? "exec" : null
-        } catch {
-          return null
-        }
-      }
-    },
-    copyFromButton(btn) {
-      const label = btn.textContent;
-      btn.disabled = !0, this.copyToClipboard().then(kind => {
-        dbg.log("copylog", {
-          ok: !!kind,
-          kind,
-          n: logs.length
-        }), btn.textContent = kind ? `已复制 ${logs.length} 条` : "复制失败", setTimeout(() => {
-          btn.textContent = label, btn.disabled = !1
-        }, 1800)
-      })
-    }
-  };
-  // Keep the tail across reloads / crashes within the same tab.
-  try {
-    const old = sessionStorage.getItem(KEY);
-    if (old) {
-      const arr = JSON.parse(old);
-      Array.isArray(arr) && (logs.push({
-        t: -1,
-        ev: "restored",
-        d: {
-          n: arr.length
-        }
-      }), logs.push(...arr), logs.length > MAX && logs.splice(0, logs.length - MAX))
-    }
-  } catch {}
-  setInterval(() => {
-    if (dirty) {
-      dirty = !1;
-      try {
-        sessionStorage.setItem(KEY, JSON.stringify(logs.slice(-1200)))
-      } catch {}
-    }
-  }, 2000);
-
-  addEventListener("error", e => dbg.log("error", {
-    msg: String(e.message || e.error || "").slice(0, 300),
-    src: e.filename,
-    line: e.lineno,
-    col: e.colno
-  }));
-  addEventListener("unhandledrejection", e => dbg.log("rejection", {
-    msg: String(e.reason && (e.reason.stack || e.reason.message) || e.reason || "").slice(0, 300)
-  }));
-  const envLog = why => dbg.throttled("env-" + why, 300, "env", {
-    why,
-    ...env()
-  });
-  addEventListener("resize", () => envLog("resize"));
-  addEventListener("orientationchange", () => envLog("orientation"));
-  document.addEventListener("visibilitychange", () => envLog("visibility"));
-  document.addEventListener("fullscreenchange", () => envLog("fullscreen"));
-
-  const tgt = n => n && n.nodeType === 1 ? (n.tagName + "." + String(n.className).split(" ").slice(0, 3).join(".")).slice(0, 90) : String(n && n.nodeType);
-  addEventListener("touchstart", e => dbg.log("win-touchstart", {
-    n: e.touches.length,
-    cancelable: e.cancelable,
-    target: tgt(e.target),
-    pts: [...e.changedTouches].map(t => [t.identifier, Math.round(t.clientX), Math.round(t.clientY)])
-  }), {
-    capture: !0,
-    passive: !0
-  });
-  addEventListener("touchend", e => dbg.log("win-touchend", {
-    n: e.touches.length,
-    target: tgt(e.target),
-    pts: [...e.changedTouches].map(t => [t.identifier, Math.round(t.clientX), Math.round(t.clientY)])
-  }), {
-    capture: !0,
-    passive: !0
-  });
-  addEventListener("touchcancel", e => dbg.log("win-touchcancel", {
-    n: e.touches.length,
-    pts: [...e.changedTouches].map(t => [t.identifier, Math.round(t.clientX), Math.round(t.clientY)])
-  }), {
-    capture: !0,
-    passive: !0
-  });
-  addEventListener("pointerdown", e => dbg.throttled("ptr", 500, "win-pointerdown", {
-    type: e.pointerType,
-    target: tgt(e.target),
-    xy: [Math.round(e.clientX), Math.round(e.clientY)]
-  }), {
-    capture: !0,
-    passive: !0
-  });
-
-  let frames = 0,
-    fT = performance.now(),
-    worst = 0,
-    lastF = performance.now();
-  const tick = now => {
-    frames++;
-    const gap = now - lastF;
-    lastF = now, gap > worst && (worst = gap);
-    now - fT >= 3000 && (dbg.log("fps", {
-      fps: round(frames * 1000 / (now - fT), 1),
-      worstMs: Math.round(worst)
-    }), frames = 0, fT = now, worst = 0);
-    requestAnimationFrame(tick)
-  };
-  requestAnimationFrame(tick);
-  dbg.log("boot", env());
-})();
-</script>
 <script>(() => {
   var _M = Object.defineProperty;
   var br = (i, e) => {
@@ -45164,11 +44979,7 @@ void main() {
         requestLock: A,
         exitLock: _,
         setGameplay(P) {
-          P = !!P, P !== r && (r = P, P || v(), M && M.root.classList.toggle("on", P && f.touch), window.__x3aDebug && window.__x3aDebug.log("setGameplay", {
-            enabled: P,
-            touch: f.touch,
-            overlay: M ? M.root.className : null
-          }))
+          P = !!P, P !== r && (r = P, P || v(), M && M.root.classList.toggle("on", P && f.touch))
         },
         setPrompt(P) {
           M && M.btn.interact.classList.toggle("on", !!P)
@@ -45340,11 +45151,6 @@ void main() {
         Z.addEventListener("touchstart", oe => {
           oe.preventDefault(), oe.stopPropagation(), E = performance.now();
           let fe = oe.changedTouches[0];
-          window.__x3aDebug && window.__x3aDebug.log("btn", {
-            a: L,
-            on: !0,
-            id: fe && fe.identifier
-          });
           if (L === "ads") {
             j = !j, Z.classList.toggle("active", j);
             return
@@ -45354,10 +45160,6 @@ void main() {
           passive: !1
         });
         let J = oe => {
-          window.__x3aDebug && window.__x3aDebug.log("btn", {
-            a: L,
-            on: !1
-          });
           if (oe.preventDefault(), oe.stopPropagation(), L !== "ads") {
             if (L === "fire") {
               let fe = !1;
@@ -45387,11 +45189,7 @@ void main() {
     }
 
     function K() {
-      f.touch || (f.touch = !0, _(), M || (M = N()), M.root.classList.toggle("on", r), document.documentElement.classList.add("is-touch"), p("touch"), window.__x3aDebug && window.__x3aDebug.log("touch-mode", {
-        enabled: r,
-        overlay: M.root.className,
-        rotated: __rot()
-      }))
+      f.touch || (f.touch = !0, _(), M || (M = N()), M.root.classList.toggle("on", r), document.documentElement.classList.add("is-touch"), p("touch"))
     }
 
     function ie() {
@@ -45403,49 +45201,8 @@ void main() {
       passive: !0,
       capture: !0
     }), e.addEventListener("touchstart", P => {
-      if (P.preventDefault(), !!r) {
-        for (let V of P.changedTouches) {
-          const _dbg = window.__x3aDebug,
-            _rot = __rot(),
-            _lim = (_rot ? innerHeight : innerWidth) * .45,
-            _x = __rx(V),
-            _y = __ry(V);
-          if (_x < _lim && w === null) {
-            w = V.identifier, S = _x, z = _y, H = O = 0, M && (M.stick.style.transform = `translate3d(${S}px,${z}px,0)`, M.nub.style.transform = "translate3d(0,0,0)", M.stick.classList.add("on"));
-            _dbg && _dbg.log("stick-start", {
-              id: V.identifier,
-              c: [Math.round(V.clientX), Math.round(V.clientY)],
-              l: [Math.round(_x), Math.round(_y)],
-              lim: Math.round(_lim),
-              rot: _rot
-            })
-          } else if (q === null) {
-            q = V.identifier, U = V.clientX, T = V.clientY;
-            _dbg && _dbg.log("look-start", {
-              id: V.identifier,
-              c: [Math.round(V.clientX), Math.round(V.clientY)],
-              l: [Math.round(_x), Math.round(_y)],
-              lim: Math.round(_lim),
-              rot: _rot
-            })
-          } else {
-            _dbg && _dbg.log("touch-ignored", {
-              id: V.identifier,
-              l: [Math.round(_x), Math.round(_y)],
-              lim: Math.round(_lim),
-              rot: _rot,
-              w,
-              q
-            })
-          }
-        }
-      } else window.__x3aDebug && window.__x3aDebug.throttled("start-blocked", 300, "touch-blocked", {
-        why: "input-disabled",
-        n: P.changedTouches.length,
-        rot: __rot(),
-        w,
-        q
-      })
+      if (P.preventDefault(), !!r)
+        for (let V of P.changedTouches) __rx(V) < (__rot() ? innerHeight : innerWidth) * .45 && w === null ? (w = V.identifier, S = __rx(V), z = __ry(V), H = O = 0, M && (M.stick.style.transform = `translate3d(${S}px,${z}px,0)`, M.nub.style.transform = "translate3d(0,0,0)", M.stick.classList.add("on"))) : q === null && (q = V.identifier, U = V.clientX, T = V.clientY)
     }, {
       passive: !1
     }), e.addEventListener("touchmove", P => {
@@ -45455,25 +45212,13 @@ void main() {
             let Y = __rx(V) - S,
               L = __ry(V) - z,
               Z = Math.hypot(Y, L);
-            Z > If && (Y *= If / Z, L *= If / Z), H = Y / If, O = -L / If, M && (M.nub.style.transform = `translate3d(${Y.toFixed(1)}px,${L.toFixed(1)}px,0)`), window.__x3aDebug && window.__x3aDebug.throttled("stick-move", 150, "stick-move", {
-              id: V.identifier,
-              c: [Math.round(V.clientX), Math.round(V.clientY)],
-              d: [Math.round(Y), Math.round(L)],
-              h: +H.toFixed(2),
-              o: +O.toFixed(2)
-            })
-          } else V.identifier === q && (Q(__ldx(V.clientX - U, V.clientY - T), __ldy(V.clientX - U, V.clientY - T)), window.__x3aDebug && window.__x3aDebug.throttled("look-move", 200, "look-move", {
-            d: [Math.round(V.clientX - U), Math.round(V.clientY - T)],
-            rot: __rot()
-          }), U = V.clientX, T = V.clientY)
+            Z > If && (Y *= If / Z, L *= If / Z), H = Y / If, O = -L / If, M && (M.nub.style.transform = `translate3d(${Y.toFixed(1)}px,${L.toFixed(1)}px,0)`)
+          } else V.identifier === q && (Q(__ldx(V.clientX - U, V.clientY - T), __ldy(V.clientX - U, V.clientY - T)), U = V.clientX, T = V.clientY)
     }, {
       passive: !1
     });
     let F = P => {
-      for (let V of P.changedTouches) window.__x3aDebug && window.__x3aDebug.log("touch-end", {
-        id: V.identifier,
-        was: V.identifier === w ? "stick" : V.identifier === q ? "look" : null
-      }), V.identifier === w ? ie() : V.identifier === q && (q = null)
+      for (let V of P.changedTouches) V.identifier === w ? ie() : V.identifier === q && (q = null)
     };
     e.addEventListener("touchend", F, {
       passive: !1
@@ -45545,15 +45290,7 @@ void main() {
           oe = (n.has("turnD") ? 1 : 0) - (n.has("turnU") ? 1 : 0);
         J && (f.look.dx += J * p_ * P), oe && (f.look.dy += oe * p_ * .6 * P)
       }
-      f.move.x = V, f.move.y = Y, f.fire = r && n.has("fire"), f.ads = r && (n.has("ads") || j), f.sprint = r && L, f.crouch = r && n.has("crouch"), window.__x3aDebug && window.__x3aDebug.throttled("input", 500, "input", {
-        on: r,
-        stick: w !== null ? [Math.round(H * 100) / 100, Math.round(O * 100) / 100] : null,
-        pad: [Math.round(re * 100) / 100, Math.round($ * 100) / 100],
-        keys: [...n],
-        move: [Math.round(V * 100) / 100, Math.round(Y * 100) / 100],
-        sprint: L,
-        touch: f.touch
-      })
+      f.move.x = V, f.move.y = Y, f.fire = r && n.has("fire"), f.ads = r && (n.has("ads") || j), f.sprint = r && L, f.crouch = r && n.has("crouch")
     }
 
     function B() {
@@ -45674,10 +45411,7 @@ void main() {
           ne.damage = 0, ne.lowHealth = 0, ne.ads = 0, K(0)
         },
         damage(F, X) {
-          !C.alive || C.invulnerable || !(F > 0) || (C.health = Math.max(0, C.health - F), window.__x3aDebug && window.__x3aDebug.log("damage", {
-            amt: Math.round(F * 10) / 10,
-            hp: Math.round(C.health)
-          }), E = 0, w = Math.min(1, w + .35 + F / 40), C.addShake(.22 + F / 70), i.events.emit("player:hit", {
+          !C.alive || C.invulnerable || !(F > 0) || (C.health = Math.max(0, C.health - F), E = 0, w = Math.min(1, w + .35 + F / 40), C.addShake(.22 + F / 70), i.events.emit("player:hit", {
             amount: F,
             fromPos: X
           }), C.health <= 0 && (C.alive = !1, z = 0, C.sprinting = !1, i.events.emit("player:dead", {})))
@@ -45788,14 +45522,7 @@ void main() {
       let ae = C.onGround ? Fo(C.speed / Mt.walk) * (C.sprinting ? Mt.bobSprint : 1) * bi(1, Mt.bobAds, C.ads) * (C.crouching ? .7 : 1) : 0;
       f = kn(f, ae, 9, F), d = -Math.cos(h * Math.PI * 2) * Mt.bobY * f, p = Math.sin(h * Math.PI) * Mt.bobX * f;
       let k = C.vel.x * Y - C.vel.z * V;
-      v = kn(v, -k / Mt.sprint * Mt.rollStrafe * bi(1, .4, C.ads), 8, F), E += F, E > Mt.regenDelay && C.health < C.maxHealth && (C.health = Math.min(C.maxHealth, C.health + Mt.regenRate * F)), K(F), ie(F), window.__x3aDebug && window.__x3aDebug.throttled("player", 700, "player", {
-        en: re,
-        mv: [Math.round(X.move.x * 100) / 100, Math.round(X.move.y * 100) / 100],
-        spd: Math.round(C.speed * 100) / 100,
-        pos: [Math.round(C.pos.x * 10) / 10, Math.round(C.pos.y * 10) / 10, Math.round(C.pos.z * 10) / 10],
-        onG: C.onGround,
-        touch: !!X.touch
-      })
+      v = kn(v, -k / Mt.sprint * Mt.rollStrafe * bi(1, .4, C.ads), 8, F), E += F, E > Mt.regenDelay && C.health < C.maxHealth && (C.health = Math.min(C.maxHealth, C.health + Mt.regenRate * F)), K(F), ie(F)
     }
 
     function Q(F) {
@@ -50511,7 +50238,6 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
         <button class="btn" data-act="settings">设置</button>
         <button class="btn" data-act="controls">操作说明</button>
         <button class="btn" data-act="restart">重新开始任务</button>
-        <button class="btn" data-act="copylog">复制诊断日志</button>
       </div>
     </section>
 
@@ -50519,7 +50245,7 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
       <div class="m-k">突击队员倒下</div>
       <h2 class="m-h">信号中断</h2>
       <dl class="m-stats"><div><dt>生存时间</dt><dd data-f="dead-time">00:00</dd></div><div><dt>已切断中继</dt><dd data-f="dead-relays">0/3</dd></div></dl>
-      <div class="m-actions col"><button class="btn primary" data-act="retry">重试</button><button class="btn" data-act="copylog">复制诊断日志</button></div>
+      <div class="m-actions col"><button class="btn primary" data-act="retry">重试</button></div>
     </section>
 
     <section class="m-screen m-card m-debrief" data-s="complete" aria-label="行动简报">
@@ -50672,11 +50398,6 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
     s.addEventListener("click", U => {
       let T = U.target.closest("button");
       if (!T || !s.contains(T)) return;
-      window.__x3aDebug && window.__x3aDebug.log("menu-click", {
-        act: T.dataset.act || null,
-        q: T.dataset.q || null,
-        tab: T.dataset.tab || null
-      });
       if (i.events.emit("ui:click", {}), T.dataset.q) {
         n.quality = T.dataset.q, v("quality"), g(), Wf(n);
         return
@@ -50686,7 +50407,7 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
         return
       }
       let D = T.dataset.act;
-      D === "copylog" ? window.__x3aDebug && window.__x3aDebug.copyFromButton(T) : D === "about" ? w("about") : D === "settings" ? w("settings") : D === "controls" ? w("controls") : D === "close-panel" ? S() : D === "invert" ? (n.invertY = !n.invertY, v("invertY"), g(), Wf(n)) : D === "fullscreen" ? M() : D && e[D] && e[D](U)
+      D === "about" ? w("about") : D === "settings" ? w("settings") : D === "controls" ? w("controls") : D === "close-panel" ? S() : D === "invert" ? (n.invertY = !n.invertY, v("invertY"), g(), Wf(n)) : D === "fullscreen" ? M() : D && e[D] && e[D](U)
     }), s.addEventListener("mouseover", U => {
       let T = U.target.closest("button");
       T && U.relatedTarget && !T.contains(U.relatedTarget) && i.events.emit("ui:hover", {})
@@ -50712,10 +50433,7 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
         },
         closePanel: S,
         show(U) {
-          U !== p && (window.__x3aDebug && window.__x3aDebug.log("menu-show", {
-            s: U,
-            prev: p
-          }), p = U, s.dataset.screen = U, S(), s.classList.toggle("open", U !== "none"), U !== "none" ? (g(), setTimeout(H, 30)) : document.activeElement && s.contains(document.activeElement) && document.activeElement.blur())
+          U !== p && (p = U, s.dataset.screen = U, S(), s.classList.toggle("open", U !== "none"), U !== "none" ? (g(), setTimeout(H, 30)) : document.activeElement && s.contains(document.activeElement) && document.activeElement.blur())
         },
         locationCard(U) {
           l.classList.toggle("on", !!U)
@@ -50877,10 +50595,7 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
 
     function M(P) {
       let V = _.state;
-      P !== V && (_.state = P, u = 0, window.__x3aDebug && window.__x3aDebug.log("state", {
-        to: P,
-        from: V
-      }), i.events.emit("game:state", {
+      P !== V && (_.state = P, u = 0, i.events.emit("game:state", {
         state: P,
         prev: V
       }))
@@ -51157,14 +50872,10 @@ vObjP = position; vONrm = normal; vWNrm = normalize(mat3(modelMatrix) * normal);
       c.alertT = 10, _.state === "playing" && !c.contactSaid && (c.contactSaid = !0, o.radio && o.radio(_l.contact, 3.2))
     }), i.events.on("player:hit", () => {
       c.alertT = Math.max(c.alertT, 8);
-      let P = [];
-      for (let V of c.relays) !V.cut && V.cutting && (V.t = Math.max(0, V.t - .25), P.push(V.id + ":" + V.t.toFixed(2)), i.events.emit("objective:progress", {
+      for (let V of c.relays) !V.cut && V.cutting && (V.t = Math.max(0, V.t - .25), i.events.emit("objective:progress", {
         id: V.id,
         t: V.t
-      }));
-      window.__x3aDebug && window.__x3aDebug.log("hit-rollback", {
-        rolled: P
-      })
+      }))
     }), i.events.on("player:rescued", () => {
       _.state === "playing" && o.message("已从水中获救", 2.5)
     });
@@ -51587,22 +51298,11 @@ errors ${window.__errors.length}${window.__errors.length?`
 
   function apply() {
     const want = touchDevice() && innerWidth < innerHeight;
-    window.__x3aDebug && window.__x3aDebug.throttled("rotate-call", 300, "rotate-call", {
-      want,
-      on,
-      w: innerWidth,
-      h: innerHeight,
-      coarse: coarse.matches
-    });
     if (!want) {
       if (!on) return;
       on = false;
       root.classList.remove("is-rotated");
       for (const p of ["position", "top", "left", "width", "height", "transform-origin", "transform"]) app.style.removeProperty(p);
-      window.__x3aDebug && window.__x3aDebug.log("rotate-off", {
-        w: innerWidth,
-        h: innerHeight
-      });
       dispatchEvent(new Event("resize"));
       return;
     }
@@ -51620,11 +51320,6 @@ errors ${window.__errors.length}${window.__errors.length?`
     app.style.height = w + "px";
     app.style.transformOrigin = "0 0";
     app.style.transform = `translateX(${w}px) rotate(90deg)`;
-    window.__x3aDebug && window.__x3aDebug.log("rotate-on", {
-      w,
-      h,
-      coarse: coarse.matches
-    });
     dispatchEvent(new Event("resize"));
   }
 
