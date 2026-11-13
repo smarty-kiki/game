@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>油彩漫步 · Oil Paint</title>
+    <meta name="description" content="《油彩漫步》——在极光下的雪岭与秋日密林里，走进一幅一笔一笔画出的油画。Oil Paint 非商业汉化镜像，版权归原作者所有。" />
+    <meta name="theme-color" content="#1c1512" />
+    <link rel="canonical" href="https://game.yao-yang.cn/games/oil-paint/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="油彩漫步 · Oil Paint" />
+    <meta property="og:description" content="在极光下的雪岭与秋日密林里，走进一幅一笔一笔画出的油画。" />
+    <meta property="og:url" content="https://game.yao-yang.cn/games/oil-paint/" />
+    <meta property="og:site_name" content="PLAY/ARCHIVE · 玩者档案" />
+    <meta property="og:image" content="https://game.yao-yang.cn/assets/world-06-hero.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://game.yao-yang.cn/assets/world-06-hero.webp" />
+    <!--
+      Oil Paint · 油彩漫步
+      Original game: Oil paint by Patch (patch.gg, blendi/oil-paint)
+      Chinese localization mirror for PLAY/ARCHIVE · 玩者档案. Non-commercial.
+      All rights remain with the original author. Takedown contact: 378031327@qq.com
+    -->
+    <link rel="icon" href="data:," />
+    <style>html,body{background:#1c1512;height:100%;margin:0;overflow:hidden}#view,#view canvas{width:100%;height:100%;display:block;position:fixed;inset:0}#loading{color:#d9b98a;letter-spacing:.08em;place-items:center;font:15px/1.4 Georgia,Songti SC,Noto Serif SC,Noto Serif CJK SC,serif;display:grid;position:fixed;inset:0}#hint{color:#f3e3c3;letter-spacing:.04em;pointer-events:none;white-space:nowrap;background:#1c14128c;border-radius:3px;padding:8px 16px;font:14px/1.4 Georgia,Songti SC,Noto Serif SC,Noto Serif CJK SC,serif;transition:opacity 2s;position:fixed;bottom:26px;left:50%;transform:translate(-50%)}#hint.faded{opacity:0}#hint.off{display:none}html[data-scene=aurora] body{background:#061219}html[data-scene=aurora] #loading{color:#9fd8c4}#scenes{gap:6px;display:flex;position:fixed;bottom:18px;left:18px}#scenes button{letter-spacing:.04em;color:#f3e3c3;cursor:pointer;background:#1c14128c;border:1px solid #f3e3c340;border-radius:3px;padding:8px 12px;font:13px/1 Georgia,Songti SC,Noto Serif SC,Noto Serif CJK SC,serif}#scenes button.on{color:#1c1512;cursor:default;background:#f3e3c3e6}@media (max-width:760px){#hint{white-space:normal;text-align:center;max-width:calc(100vw - 32px);line-height:1.6;bottom:64px}}</style>
+    <script type="module" crossorigin src="./assets/index-CW8m4Is8.js"></script>
+  </head>
+  <body>
+    <div id="view"></div>
+    <div id="loading">正在调色</div>
+    <div id="scenes"><button data-scene="aurora" tabindex="-1">极光雪岭</button><button data-scene="autumn" tabindex="-1">秋日林间</button></div>
+    <div id="hint">点击画面转动视角 · WASD 移动 · Shift 冲刺 · 空格跳跃 · 滚轮拉远</div>
+  </body>
+</html>

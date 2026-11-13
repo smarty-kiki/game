@@ -701,6 +701,7 @@ button { font: inherit; }
   background: linear-gradient(180deg, #101214, #0b0d0e);
   box-shadow: 0 40px 120px rgba(0, 0, 0, .38);
 }
+.world-card + .world-card { margin-top: clamp(22px, 2.4vw, 36px); }
 
 .world-visual {
   position: relative;

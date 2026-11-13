@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f7dfc2" />
+    <meta name="description" content="《恐龙狂奔：锁定状态》——一头四肢各有想法的恐龙，在沙漠里停不下来的 3D 布偶跑酷。中文汉化镜像，版权归原作者所有。" />
+    <title>恐龙狂奔：锁定状态 · Dino Run</title>
+    <link rel="canonical" href="https://game.yao-yang.cn/games/dino/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="恐龙狂奔：锁定状态 · Dino Run" />
+    <meta property="og:description" content="专注拉满，四肢掉线。躲开仙人掌、翼龙和风滚草，在沙漠里尽量多跑一会。" />
+    <meta property="og:url" content="https://game.yao-yang.cn/games/dino/" />
+    <meta property="og:site_name" content="PLAY/ARCHIVE · 玩者档案" />
+    <meta property="og:image" content="https://game.yao-yang.cn/assets/world-07-hero.webp" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://game.yao-yang.cn/assets/world-07-hero.webp" />
+    <!--
+      Dino Run: Locked In · 恐龙狂奔：锁定状态
+      Original game: Dino Run: Locked In by @noclipepe (https://noclipepe.pages.dev/dino/)
+      Chinese localization mirror for PLAY/ARCHIVE · 玩者档案. Non-commercial, mirrored with the author's permission.
+      All rights remain with the original author. Takedown contact: 378031327@qq.com
+      Bundled third-party licenses: THIRD-PARTY-NOTICES.md and licenses/.
+      The online leaderboard is replaced by an on-device local board; no score data leaves the browser.
+    -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A6%96%3C/text%3E%3C/svg%3E"
+    />
+    <style>
+      :root {
+        --display: Impact, "Arial Black", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+      }
+      #title h1, #gameover h2 { letter-spacing: .04em; }
+      @media (max-width: 760px) {
+        #hints { bottom: calc(18px + env(safe-area-inset-bottom)); }
+      }
+    </style>
+    <script>
+      // The original game talks to a remote scoreboard. This mirror keeps the
+      // board fully on-device so the page never calls the author's API.
+      (() => {
+        const KEY = "dino-local-board-v1";
+        const realFetch = window.fetch.bind(window);
+
+        const readRows = () => {
+          try {
+            const rows = JSON.parse(localStorage.getItem(KEY) || "[]");
+            return Array.isArray(rows)
+              ? rows.filter((row) => row && typeof row.name === "string" && Number.isFinite(row.ms))
+              : [];
+          } catch {
+            return [];
+          }
+        };
+        const sortRows = (rows) => rows.slice().sort((a, b) => b.ms - a.ms);
+        const reply = (payload) =>
+          Promise.resolve(
+            new Response(JSON.stringify(payload), {
+              headers: { "Content-Type": "application/json" },
+            }),
+          );
+
+        window.fetch = (input, init) => {
+          let url;
+          try {
+            const raw = typeof input === "string" ? input : input && input.url;
+            url = new URL(raw || "", location.href);
+          } catch {
+            return realFetch(input, init);
+          }
+          if (!url.pathname.endsWith("/api/scores")) return realFetch(input, init);
+
+          const method = String((init && init.method) || (input && input.method) || "GET").toUpperCase();
+          const rows = readRows();
+
+          if (method === "GET") {
+            return reply({ top: sortRows(rows).slice(0, 8).map(({ name, ms }) => ({ name, ms })) });
+          }
+
+          if (method === "POST") {
+            let body = {};
+            try {
+              body = JSON.parse((init && init.body) || "{}");
+            } catch {}
+            const name = String(body.name || "").trim();
+            const ms = Number(body.ms);
+            if (!/^[\p{L}\p{N}]{2,16}$/u.test(name)) return reply({ error: "name" });
+            if (!Number.isFinite(ms) || ms < 0) return reply({ error: "score" });
+
+            const existing = rows.find((row) => row.name === name);
+            let best = ms;
+            if (existing) {
+              if (ms > existing.ms) existing.ms = ms;
+              best = existing.ms;
+            } else {
+              rows.push({ name, ms });
+            }
+            const ranked = sortRows(rows).slice(0, 50);
+            try {
+              localStorage.setItem(KEY, JSON.stringify(ranked));
+            } catch {}
+            const rank = ranked.findIndex((row) => row.name === name) + 1;
+            return reply({
+              top: ranked.slice(0, 8).map(({ name: rowName, ms: rowMs }) => ({ name: rowName, ms: rowMs })),
+              rank: rank || 1,
+              best,
+              name,
+            });
+          }
+
+          return reply({ error: "offline" });
+        };
+      })();
+    </script>
+    <script type="module" crossorigin src="./assets/index-CLlHzaJN.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-hIOaSPKP.css">
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+    <div id="vignette"></div>
+
+    <!-- Top centre. The score stays visible when the rest of the UI is hidden with H. -->
+    <div id="score">
+      <span id="best">最佳 00000</span>
+      <span id="points">00000</span>
+    </div>
+
+    <div id="ui">
+      <div id="badges">
+        <span id="badge-auto" class="badge hidden">自动游玩</span>
+        <span id="badge-mute" class="badge hidden">已静音</span>
+      </div>
+
+      <section id="title" class="panel">
+        <h1>恐龙狂奔<small>锁定状态</small></h1>
+        <p class="tag">专注拉满，四肢掉线。</p>
+        <p class="cta">
+          <span class="for-keys">按空格开始奔跑</span>
+          <span class="for-touch">点击开始奔跑</span>
+        </p>
+      </section>
+
+      <section id="gameover" class="panel hidden">
+        <h2>游戏结束</h2>
+        <p id="quip"></p>
+        <p id="final">得分 <b id="final-score">0</b><span id="new-best" class="hidden">新纪录</span></p>
+        <form id="save" class="hidden" autocomplete="off">
+          <input id="save-name" maxlength="16" placeholder="你的名字" autocapitalize="off" spellcheck="false" enterkeyhint="send" />
+          <button id="save-send" class="btn small" type="submit">保存</button>
+          <button id="save-skip" class="btn small ghost" type="button">跳过</button>
+          <p id="save-msg"></p>
+        </form>
+        <ol id="board" class="hidden"></ol>
+        <button id="btn-restart" class="btn" type="button">再跑一次</button>
+      </section>
+
+      <div id="hints">
+        <span class="for-keys"><kbd>空格</kbd>/<kbd>&uarr;</kbd> 跳跃 &middot; <kbd>&darr;</kbd> 下蹲 &middot; <kbd>A</kbd> 自动游玩 &middot; <kbd>H</kbd> 隐藏界面 &middot; <kbd>M</kbd> 静音</span>
+      </div>
+    </div>
+
+    <div id="loading">正在热身&hellip;</div>
+
+  </body>
+</html>

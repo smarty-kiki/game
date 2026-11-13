@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>PLAY/ARCHIVE · 玩者档案 — 一个 AI 网页游戏档案馆</title>
-  <meta name="description" content="PLAY/ARCHIVE 玩者档案是一个非商业的 AI 网页游戏档案馆，持续收录由 AI 参与创作、打开浏览器就能玩的游戏。无广告、无内购、不以盈利为目的；如有侵权，联系即删。首个收录作品：《瞎逼玩3A大作》。">
+  <meta name="description" content="PLAY/ARCHIVE 玩者档案是一个非商业的 AI 网页游戏档案馆，持续收录由 AI 参与创作、打开浏览器就能玩的游戏。无广告、无内购、不以盈利为目的；如有侵权，联系即删。现已收录《瞎逼玩3A大作》《星夜骑手》《雾锁山门》《灯落荒原》《拼布小国》《油彩漫步》《恐龙狂奔》。">
   <meta name="author" content="PLAY/ARCHIVE">
   <meta name="theme-color" content="#08090a">
   <meta name="color-scheme" content="dark">
@@ -26,7 +26,108 @@
   <meta name="twitter:image" content="https://game.yao-yang.cn/assets/og-cover.jpg">
 
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="preload" as="image" href="assets/world-01-hero.webp" imagesrcset="assets/world-01-hero-960.webp 960w, assets/world-01-hero.webp 1600w" imagesizes="100vw" type="image/webp">
+  <script>
+    // Pick this visit's featured world while the head is still parsing, so its
+    // hero image can start loading before the hero markup is reached. The last
+    // pick is remembered per tab; a reload always shows a different world.
+    (() => {
+      const worlds = [
+        {
+          slug: "games/xia-bi-wan-3a/",
+          num: "001",
+          genre: "RAIN-SOAKED HARBOR / FIRST-PERSON RAID",
+          name: "瞎逼玩<span>3A大作</span>",
+          title: "瞎逼玩3A大作",
+          desc: "切断三处中继，突破封锁，在雨夜码头完成一场短篇第一人称突袭。",
+          hero: "world-01-hero",
+          coord: "雨夜 / 港区中继 / 001—∞",
+        },
+        {
+          slug: "games/starry-nightrider/",
+          num: "002",
+          genre: "VAN GOGH’S STARRY NIGHT / NIGHT RIDE",
+          name: "星夜<span>骑手</span>",
+          title: "星夜骑手",
+          desc: "骑车穿过梵高笔下的村庄，把散落的光球送进教堂尖塔。",
+          hero: "world-02-hero",
+          coord: "星夜 / 梵高村庄 / 002—∞",
+        },
+        {
+          slug: "games/wu-suo-shan-men/",
+          num: "003",
+          genre: "MIST-LOCKED GATE / WUXIA ACTION",
+          name: "雾锁<span>山门</span>",
+          title: "雾锁山门",
+          desc: "雪夜山道上提剑而行，沿着灯火与雾雪一路杀上镇岳台。",
+          hero: "world-03-hero",
+          coord: "雾雪 / 镇岳山门 / 003—∞",
+        },
+        {
+          slug: "games/lanternfall/",
+          num: "004",
+          genre: "LANTERNFALL / LANTERN-BEARING ROGUELITE",
+          name: "灯落<span>荒原</span>",
+          title: "灯落荒原",
+          desc: "提着最后一盏灯，带着四人小队穿过被黑暗吞没的荒原。",
+          hero: "world-04-hero",
+          coord: "灯火 / 黑暗荒原 / 004—∞",
+        },
+        {
+          slug: "games/patchwork-quilt/",
+          num: "005",
+          genre: "PATCHWORK QUILT / STOP-MOTION COUNTRY",
+          name: "拼布<span>小国</span>",
+          title: "拼布小国",
+          desc: "一床手工拼布铺成的小小国度，布偶走过针脚与布缝。",
+          hero: "world-05-hero",
+          coord: "暖灯 / 缝线小国 / 005—∞",
+        },
+        {
+          slug: "games/oil-paint/",
+          num: "006",
+          genre: "OIL PAINT / AURORA & AUTUMN",
+          name: "油彩<span>漫步</span>",
+          title: "油彩漫步",
+          desc: "走进极光雪岭与秋日林间，一笔一笔画出的两段漫步。",
+          hero: "world-06-hero",
+          coord: "极光 / 油彩雪岭 / 006—∞",
+        },
+        {
+          slug: "games/dino/",
+          num: "007",
+          genre: "DINO RUN / LOCKED IN",
+          name: "恐龙<span>狂奔</span>",
+          title: "恐龙狂奔",
+          desc: "一头四肢各有想法的恐龙，在落日沙漠里停不下来。",
+          hero: "world-07-hero",
+          coord: "落日 / 沙海狂奔 / 007—∞",
+        },
+      ];
+
+      const key = "play-archive-featured";
+      let previous = -1;
+      try { previous = Number.parseInt(sessionStorage.getItem(key), 10); } catch {}
+
+      let index = Math.floor(Math.random() * worlds.length);
+      if (worlds.length > 1 && index === previous) {
+        index = (index + 1 + Math.floor(Math.random() * (worlds.length - 1))) % worlds.length;
+      }
+      try { sessionStorage.setItem(key, String(index)); } catch {}
+
+      const world = worlds[index];
+      window.__PLAY_FEATURED__ = world;
+
+      const preload = document.createElement("link");
+      preload.rel = "preload";
+      preload.as = "image";
+      preload.type = "image/webp";
+      preload.href = `assets/${world.hero}.webp`;
+      preload.setAttribute("imagesrcset", `assets/${world.hero}-960.webp 960w, assets/${world.hero}.webp 1600w`);
+      preload.setAttribute("imagesizes", "100vw");
+      preload.setAttribute("fetchpriority", "high");
+      document.head.appendChild(preload);
+    })();
+  </script>
   <link rel="stylesheet" href="assets/site.css">
   <script src="assets/site.js" defer></script>
 </head>
@@ -54,7 +155,7 @@
         <a href="#rights"><span>03</span>联系</a>
       </nav>
 
-      <a class="header-play" href="games/xia-bi-wan-3a/" target="_blank" rel="noopener" aria-label="立即游玩《瞎逼玩3A大作》，在新标签页打开">
+      <a class="header-play" href="games/dino/" target="_blank" rel="noopener" aria-label="立即游玩《恐龙狂奔》，在新标签页打开">
         <span>立即游玩</span>
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
       </a>
@@ -65,9 +166,15 @@
     <section class="hero" aria-labelledby="hero-title" data-hero>
       <div class="hero-media" aria-hidden="true">
         <picture>
-          <source media="(max-width: 760px)" srcset="assets/world-01-hero-960.webp">
-          <img src="assets/world-01-hero.webp" width="1600" height="900" alt="" fetchpriority="high" decoding="async">
+          <source data-hero-source media="(max-width: 760px)" srcset="assets/world-07-hero-960.webp">
+          <img data-hero-image src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" width="1600" height="900" alt="" fetchpriority="high" decoding="async">
         </picture>
+        <noscript>
+          <picture>
+            <source media="(max-width: 760px)" srcset="assets/world-07-hero-960.webp">
+            <img src="assets/world-07-hero.webp" width="1600" height="900" alt="">
+          </picture>
+        </noscript>
       </div>
       <div class="hero-shade" aria-hidden="true"></div>
       <div class="hero-spotlight" data-hero-spot aria-hidden="true"></div>
@@ -105,12 +212,12 @@
         <aside class="hero-teaser" aria-label="当前收录作品">
           <div class="teaser-head">
             <span>FEATURED WORLD</span>
-            <span class="teaser-number">001</span>
+            <span class="teaser-number">007</span>
           </div>
-          <a class="teaser-link" href="games/xia-bi-wan-3a/" target="_blank" rel="noopener" aria-label="进入《瞎逼玩3A大作》，在新标签页打开">
-            <p class="teaser-genre">RAIN-SOAKED HARBOR / FIRST-PERSON</p>
-            <p class="teaser-name">瞎逼玩<span>3A大作</span></p>
-            <p class="teaser-desc">切断三处中继，穿过封锁，登船撤离。</p>
+          <a class="teaser-link" href="games/dino/" target="_blank" rel="noopener" aria-label="进入《恐龙狂奔》，在新标签页打开">
+            <p class="teaser-genre">DINO RUN / LOCKED IN</p>
+            <p class="teaser-name">恐龙<span>狂奔</span></p>
+            <p class="teaser-desc">一头四肢各有想法的恐龙，在落日沙漠里停不下来。</p>
             <span class="teaser-play">
               <span class="teaser-play-icon" aria-hidden="true">
                 <svg viewBox="0 0 16 16"><path d="M5 3.5 12 8l-7 4.5Z" fill="currentColor"/></svg>
@@ -128,10 +235,46 @@
             <span>SCROLL / 向下探索</span>
           </a>
           <p class="hero-disclaimer">NO ADS · NO PAYWALL · 不以盈利为目的</p>
-          <p class="hero-coord" aria-hidden="true">05:42 / PORT 04 / 001—∞</p>
+          <p class="hero-coord" aria-hidden="true">落日 / 沙海狂奔 / 007—∞</p>
         </div>
       </div>
     </section>
+
+    <script>
+      // Swap the static Dino fallback for this visit's featured world.
+      (() => {
+        const world = window.__PLAY_FEATURED__;
+        if (!world) return;
+
+        const hero = document.querySelector("[data-hero]");
+        if (!hero) return;
+        const source = hero.querySelector("[data-hero-source]");
+        const image = hero.querySelector("[data-hero-image]");
+        const teaserLink = hero.querySelector(".teaser-link");
+        const teaserNumber = hero.querySelector(".teaser-number");
+        const teaserGenre = hero.querySelector(".teaser-genre");
+        const teaserName = hero.querySelector(".teaser-name");
+        const teaserDesc = hero.querySelector(".teaser-desc");
+        const coord = hero.querySelector(".hero-coord");
+        if (!source || !image || !teaserLink || !teaserNumber || !teaserGenre || !teaserName || !teaserDesc || !coord) return;
+
+        source.srcset = `assets/${world.hero}-960.webp`;
+        image.src = `assets/${world.hero}.webp`;
+        teaserNumber.textContent = world.num;
+        teaserGenre.textContent = world.genre;
+        teaserName.innerHTML = world.name;
+        teaserDesc.textContent = world.desc;
+        coord.textContent = world.coord;
+        teaserLink.href = world.slug;
+        teaserLink.setAttribute("aria-label", `进入《${world.title}》，在新标签页打开`);
+
+        const headerPlay = document.querySelector(".header-play");
+        if (headerPlay) {
+          headerPlay.href = world.slug;
+          headerPlay.setAttribute("aria-label", `立即游玩《${world.title}》，在新标签页打开`);
+        }
+      })();
+    </script>
 
     <div class="ticker" aria-hidden="true">
       <div class="ticker-track">
@@ -160,7 +303,7 @@
           <p class="section-kicker"><span class="section-index">01</span><span>THE ARCHIVE</span><span class="section-sep" aria-hidden="true">/</span><span>已归档的世界</span></p>
           <div class="archive-title-row">
             <h2 id="archive-title">先玩点什么<span class="accent-dot">。</span></h2>
-            <p class="section-intro">这里收录由 AI 参与创作、可以直接在浏览器里玩的游戏。<br>目前 1 个世界已开放，之后会持续增加。</p>
+            <p class="section-intro">这里收录由 AI 参与创作、可以直接在浏览器里玩的游戏。<br>目前 7 个世界已开放，之后会持续增加。</p>
           </div>
         </div>
 
@@ -209,9 +352,279 @@
           </div>
         </article>
 
+        <article class="world-card" aria-labelledby="world-02-title" data-reveal>
+          <a class="world-visual" href="games/starry-nightrider/" target="_blank" rel="noopener" aria-label="进入《星夜骑手》，在新标签页打开">
+            <img src="assets/world-02-hud.webp" width="1160" height="900" alt="《星夜骑手》中，骑手穿行在梵高《星月夜》风格的村庄与星空下" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 002</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / NIGHT RIDE</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 002</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-02-title">星夜<span>骑手</span></h3>
+            <p class="world-subtitle">VAN GOGH’S STARRY NIGHT · NIGHT RIDE</p>
+            <p class="world-desc">骑上自行车，驶入梵高《星月夜》的村庄。收集散落的光球，穿过石板路与街灯，把它们送进教堂尖塔。静态镜像不含排行榜与联机服务。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>骑行</span><span>探索</span><span>3D</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>骑行探索</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 触屏</dd></div>
+              <div><dt>大小</dt><dd>约 8.6 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/starry-nightrider/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 8.6 MB · 静态镜像，无排行榜 / 联机</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-03-title" data-reveal>
+          <a class="world-visual" href="games/wu-suo-shan-men/" target="_blank" rel="noopener" aria-label="进入《雾锁山门》，在新标签页打开">
+            <img src="assets/world-03-hud.webp" width="1440" height="810" alt="《雾锁山门》标题画面：雪夜山道上，提剑的侠客走向雾中的山门" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 003</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / MIST-LOCKED GATE</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 003</span>
+              <span>2026 / WEBGL 2</span>
+            </div>
+
+            <h3 class="world-title" id="world-03-title">雾锁<span>山门</span></h3>
+            <p class="world-subtitle">MIST-LOCKED GATE · WUXIA ACTION</p>
+            <p class="world-desc">师父留下的最后一道撤防令，要送上雪山深处的镇岳台。挥剑、格挡、闪避，沿着灯火与雾雪一路杀上山门。歸藏作品。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>武侠</span><span>动作</span><span>3D</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>武侠动作</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 触屏</dd></div>
+              <div><dt>大小</dt><dd>约 53 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/wu-suo-shan-men/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 53 MB · 建议使用支持 WebGL 2 的设备</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-04-title" data-reveal>
+          <a class="world-visual" href="games/lanternfall/" target="_blank" rel="noopener" aria-label="进入《灯落荒原》，在新标签页打开">
+            <img src="assets/world-04-hud.webp" width="1440" height="810" alt="《灯落荒原》中，提灯人带着队伍穿过荒原的夜色与灯影" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 004</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / THE LANTERN ROAD</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 004</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-04-title">灯落<span>荒原</span></h3>
+            <p class="world-subtitle">LANTERNFALL · LANTERN-BEARING ROGUELITE</p>
+            <p class="world-desc">提着最后一盏灯，带着四人小队穿过被黑暗吞没的荒原。队伍会自动战斗，你负责选择路线、拾取装备与卡牌，在一次次灯火坠落中走得更远。中文汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>小队</span><span>自动战斗</span><span>Roguelite</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>小队 Roguelite</dd></div>
+              <div><dt>操作</dt><dd>键鼠</dd></div>
+              <div><dt>大小</dt><dd>约 4.9 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/lanternfall/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 4.9 MB · 非商业汉化镜像</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-05-title" data-reveal>
+          <a class="world-visual" href="games/patchwork-quilt/" target="_blank" rel="noopener" aria-label="进入《拼布小国》，在新标签页打开">
+            <img src="assets/world-05-hud.webp" width="1440" height="810" alt="《拼布小国》中，戴草帽的布偶站在手工拼布缝成的小村庄前" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 005</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / THE PATCHWORK COUNTRY</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 005</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-05-title">拼布<span>小国</span></h3>
+            <p class="world-subtitle">PATCHWORK QUILT · STOP-MOTION COUNTRY</p>
+            <p class="world-desc">一床正在缝制的手工拼布，铺成有村庄、风车与河流的小小国度。戴草帽的布偶走过针脚与布缝，每一步都像定格动画。中文汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>布偶</span><span>探索</span><span>3D</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>拼布漫游</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 手柄</dd></div>
+              <div><dt>大小</dt><dd>约 8.6 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/patchwork-quilt/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 8.6 MB · 建议使用键盘与鼠标</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-06-title" data-reveal>
+          <a class="world-visual" href="games/oil-paint/" target="_blank" rel="noopener" aria-label="进入《油彩漫步》，在新标签页打开">
+            <img src="assets/world-06-hud.webp" width="1440" height="810" alt="《油彩漫步》中，披斗篷的旅人在金黄的秋日林间小路上行走" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 006</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / THE AUTUMN WOOD</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 006</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-06-title">油彩<span>漫步</span></h3>
+            <p class="world-subtitle">OIL PAINT · TWO PAINTED WALKS</p>
+            <p class="world-desc">一笔一笔画出的两段漫步：极光下的雪岭与亮灯的小屋，秋日密林与落叶小路。披斗篷的旅人走到哪里，油彩就留在哪里。中文汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>油画</span><span>漫步</span><span>3D</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>油画漫游</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 手柄</dd></div>
+              <div><dt>大小</dt><dd>约 8.6 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/oil-paint/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 8.6 MB · 建议使用键盘与鼠标</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-07-title" data-reveal>
+          <a class="world-visual" href="games/dino/" target="_blank" rel="noopener" aria-label="进入《恐龙狂奔》，在新标签页打开">
+            <img src="assets/world-07-hud.webp" width="1440" height="810" alt="《恐龙狂奔》中，布偶恐龙在落日沙漠里跃过仙人掌" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 007</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / DESERT RUN</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 007</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-07-title">恐龙<span>狂奔</span></h3>
+            <p class="world-subtitle">DINO RUN · LOCKED IN</p>
+            <p class="world-desc">一头四肢各有想法的恐龙，在落日沙漠里停不下来。躲开仙人掌、翼龙和风滚草，看看这次能跑多远。中文汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>跑酷</span><span>布偶</span><span>3D</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>3D 跑酷</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 触屏</dd></div>
+              <div><dt>大小</dt><dd>约 4.7 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/dino/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 4.7 MB · 排行榜只保存在本机</p>
+            </div>
+          </div>
+        </article>
+
         <aside class="archive-next" data-reveal>
           <div class="next-mark" aria-hidden="true">
-            <span>002</span>
+            <span>008</span>
             <i></i>
             <span>∞</span>
           </div>
@@ -309,10 +722,10 @@
           </div>
         </div>
 
-        <a class="final-world" href="games/xia-bi-wan-3a/" target="_blank" rel="noopener" data-reveal aria-label="进入《瞎逼玩3A大作》，在新标签页打开">
+        <a class="final-world" href="games/dino/" target="_blank" rel="noopener" data-reveal aria-label="进入《恐龙狂奔》，在新标签页打开">
           <span class="final-world-copy">
-            <span class="final-world-label">WORLD 001 IS WAITING</span>
-            <span class="final-world-title">去玩 <span>瞎逼玩3A大作</span></span>
+            <span class="final-world-label">WORLD 007 IS WAITING</span>
+            <span class="final-world-title">去玩 <span>恐龙狂奔</span></span>
           </span>
           <span class="final-world-arrow" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5" fill="none" stroke="currentColor" stroke-width="1.25"/></svg>

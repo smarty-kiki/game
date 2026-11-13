@@ -18,11 +18,51 @@ game/
     ├── sitemap.xml
     ├── assets/             # 首页样式、脚本、图标与游戏截图
     └── games/
-        └── xia-bi-wan-3a/
-            └── index.html  # 首个游戏，单文件自包含
+        ├── xia-bi-wan-3a/
+        │   └── index.html  # 首个游戏，单文件自包含
+        ├── starry-nightrider/  # 星夜骑手 汉化静态镜像
+        │   ├── index.html
+        │   ├── assets/     # 构建产物（JS / CSS）
+        │   ├── hails/      # NPC 语音
+        │   └── …
+        ├── wu-suo-shan-men/    # 雾锁山门 静态镜像（WebGL 2）
+        │   ├── index.html
+        │   ├── game.cdb73b9b.js
+        │   ├── assets/
+        │   ├── assets-hd/
+        │   └── …
+        ├── lanternfall/        # 灯落荒原 汉化镜像（单文件 WebGL）
+        │   └── index.html
+        ├── patchwork-quilt/    # 拼布小国 汉化静态镜像
+        │   ├── index.html
+        │   ├── assets/         # 构建产物（JS / JSON）
+        │   ├── figure/         # 布偶骨骼与动画（GLB）
+        │   └── …
+        ├── oil-paint/          # 油彩漫步 汉化静态镜像
+        │   ├── index.html
+        │   ├── assets/         # 构建产物（JS / JSON）
+        │   ├── figure/         # 旅人模型与动画（GLB）
+        │   └── …
+        └── dino/               # 恐龙狂奔 汉化静态镜像
+            ├── index.html
+            ├── assets/         # 构建产物（JS / CSS）
+            ├── licenses/       # 第三方许可证
+            └── …
 ```
 
 `site/` 下的内容会原样对外提供。每个游戏放在独立目录中，删除对应目录即可移除该游戏及其全部静态依赖。
+
+`starry-nightrider/` 是 Starry Nightrider 的非商业汉化静态镜像：界面、地标与 NPC 字幕已本地化，排行榜、在线人数与多人联机接口已停用或改为本地降级，页面内保留了原作者署名与下架联系方式。
+
+`wu-suo-shan-men/` 是歸藏（Guizang）授权镜像，保留原作者的署名、制作说明与转载声明；游戏本体较大，加载时需要 WebGL 2。
+
+`lanternfall/` 是 [Lanternfall](https://loktar00.github.io/lanternfall/) 的非商业汉化镜像，单文件自包含（内含 Three.js、游戏脚本与音频），保留原作者署名与下架联系方式。
+
+`patchwork-quilt/` 是 Patch（patch.gg，`blendi/patchwork-quilt`）的非商业汉化静态镜像：加载提示、操作提示与定格步频文案已本地化；代码 MIT、美术 CC0，随附 `LICENSE.txt`、`LICENCE-NOTES.md`、`CREDITS.md`、`RAPIER-LICENSE.txt` 与第三方声明。建议使用键盘鼠标或手柄。
+
+`oil-paint/` 是 Patch（patch.gg，`blendi/oil-paint`）的非商业汉化静态镜像：极光雪岭与秋日林间两幅场景，加载进度、场景切换、操作提示与页面文案已本地化；代码 MIT、美术 CC0，随附 `LICENSE.txt`、`LICENCE-NOTES.md`、`CREDITS.md`、`RAPIER-LICENSE.txt` 与第三方声明。建议使用键盘鼠标或手柄。
+
+`dino/` 是 [Dino Run: Locked In](https://noclipepe.pages.dev/dino/)（作者 @noclipepe）的非商业汉化静态镜像，已获作者授权：标题、提示、结算与彩蛋文案已本地化；原在线排行榜改为只保存在浏览器 `localStorage` 的本机榜单，页面不向外发送成绩。随附 `CREDITS.md`、`THIRD-PARTY-NOTICES.md` 与 `licenses/`（three.js MIT、Rapier Apache-2.0）。支持键鼠与触屏。
 
 ## 本地预览
 
@@ -66,7 +106,7 @@ chmod +x project/after_push.sh
    尽量保持单文件自包含；如果游戏有依赖，放在同一目录内，删除目录时不留残余。
 2. 在 `site/index.html` 的档案区新增一张游戏卡片，并同步更新：
    - 首页头部「立即游玩」的链接
-   - Hero 区的 FEATURED WORLD 预览
+   - Hero 区的 FEATURED WORLD 预览，以及 `<head>` 中随机 Featured 的世界列表
    - 当前收录数量与「下一个世界」文案
    - 页面底部的最终入口
 3. 为首页生成对应的截图素材，统一放在 `site/assets/`，优先使用 WebP。
