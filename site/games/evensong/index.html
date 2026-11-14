@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>晚祷 · Evensong</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="沉没大教堂中的一场决斗：一场可以直接在浏览器里游玩的魂系短篇。">
+  <meta name="theme-color" content="#05070b">
+  <meta name="author" content="PLAY/ARCHIVE · 玩者档案">
+  <!--
+    Mirrored by PLAY/ARCHIVE · 玩者档案 (https://game.yao-yang.cn/), a non-commercial game archive.
+    Original game: https://evensong-phi.vercel.app/
+    All rights remain with the original author. Takedown contact: 378031327@qq.com
+  -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="晚祷">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PLAY/ARCHIVE · 玩者档案">
+  <meta property="og:title" content="晚祷 · Evensong">
+  <meta property="og:description" content="沉没大教堂中的一场决斗：一场可以直接在浏览器里游玩的魂系短篇。">
+  <meta property="og:url" content="https://game.yao-yang.cn/games/evensong/">
+  <link rel="canonical" href="https://game.yao-yang.cn/games/evensong/">
+  <meta property="og:image" content="https://game.yao-yang.cn/games/evensong/assets/share/card.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="身披象牙色盔甲的高挑身影立于巨大的管风琴前，金色琴管如双翼般在身后展开。">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="晚祷 · Evensong">
+  <meta name="twitter:description" content="沉没大教堂中的一场决斗：一场可以直接在浏览器里游玩的魂系短篇。">
+  <meta name="twitter:image" content="https://game.yao-yang.cn/games/evensong/assets/share/card.jpg">
+  <meta name="twitter:image:alt" content="身披象牙色盔甲的高挑身影立于巨大的管风琴前，金色琴管如双翼般在身后展开。">
+  <style>
+    /* a phone: the page never scrolls, zooms, pulls to refresh, selects or opens a long-press menu (the browser keeps out of the game) */
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #05070b; touch-action: none; -webkit-text-size-adjust: 100%; }
+    @media (pointer: coarse) { html, body { overscroll-behavior: none; } }
+    canvas#view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; outline: none; touch-action: none; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    #ui { position: fixed; inset: 0; pointer-events: none; }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+  </script>
+</head>
+<body>
+  <canvas id="view" tabindex="0" aria-label="晚祷 游戏画面"></canvas>
+  <div id="ui"></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

@@ -43,9 +43,47 @@ game/
         │   ├── assets/         # 构建产物（JS / JSON）
         │   ├── figure/         # 旅人模型与动画（GLB）
         │   └── …
-        └── dino/               # 恐龙狂奔 汉化静态镜像
+        ├── dino/               # 恐龙狂奔 汉化静态镜像
+        │   ├── index.html
+        │   ├── assets/         # 构建产物（JS / CSS）
+        │   ├── licenses/       # 第三方许可证
+        │   └── …
+        ├── evensong/           # 晚祷 汉化静态镜像（ES modules + three.js）
+        │   ├── index.html
+        │   ├── assets/         # 模型、贴图、音频与字体
+        │   ├── src/            # 未打包的游戏源码（可直接汉化）
+        │   ├── vendor/         # three.js r186
+        │   ├── licenses/       # 第三方许可证
+        │   └── …
+        ├── keraunos/           # 雷霆航线 汉化静态镜像（ES modules + three.js + WebGPU）
+        │   ├── index.html
+        │   ├── src/            # 未打包的游戏源码（可直接汉化）
+        │   ├── vendor/         # three.js r187
+        │   ├── sw.js           # 原站 Service Worker（解码 d/ 中的素材）
+        │   ├── d/              # 原始编码素材（由 sw.js 解码为 assets/…）
+        │   ├── licenses/       # 第三方许可证
+        │   └── …
+        ├── checkmate-temple/   # 将死圣殿 汉化静态镜像（ES modules + three.js + Rapier）
+        │   ├── index.html
+        │   ├── main.js         # 未打包的游戏源码（可直接汉化）
+        │   ├── voice.js        # 字幕与旁白调度
+        │   ├── vendor/         # three.js r170 / Rapier / chess.js / Draco
+        │   ├── assets/         # 模型、贴图、音频与铭文数据
+        │   ├── voice/          # 英文原声与中文字幕清单
+        │   ├── licenses/       # 第三方许可证
+        │   └── …
+        ├── unsung-vale/        # 无声山谷 汉化静态镜像（Vite + three.js 构建产物）
+        │   ├── index.html
+        │   ├── assets/         # 构建产物（JS / CSS / 字体）
+        │   ├── audio/          # 音乐与音效
+        │   ├── models/         # 主角模型（GLB）
+        │   ├── world/          # 程序化地形高度数据
+        │   ├── CREDITS-AUDIO.md  # 原项目音频署名
+        │   ├── licenses/       # 第三方许可证
+        │   └── …
+        └── golden-hour/        # 黄金时刻 汉化静态镜像（单文件游戏包 + three.js）
             ├── index.html
-            ├── assets/         # 构建产物（JS / CSS）
+            ├── dist/game.js    # 游戏本体（含 three.js r180）
             ├── licenses/       # 第三方许可证
             └── …
 ```
@@ -63,6 +101,16 @@ game/
 `oil-paint/` 是 Patch（patch.gg，`blendi/oil-paint`）的非商业汉化静态镜像：极光雪岭与秋日林间两幅场景，加载进度、场景切换、操作提示与页面文案已本地化；代码 MIT、美术 CC0，随附 `LICENSE.txt`、`LICENCE-NOTES.md`、`CREDITS.md`、`RAPIER-LICENSE.txt` 与第三方声明。建议使用键盘鼠标或手柄。
 
 `dino/` 是 [Dino Run: Locked In](https://noclipepe.pages.dev/dino/)（作者 @noclipepe）的非商业汉化静态镜像，已获作者授权：标题、提示、结算与彩蛋文案已本地化；原在线排行榜改为只保存在浏览器 `localStorage` 的本机榜单，页面不向外发送成绩。随附 `CREDITS.md`、`THIRD-PARTY-NOTICES.md` 与 `licenses/`（three.js MIT、Rapier Apache-2.0）。支持键鼠与触屏。
+
+`evensong/` 是 [Evensong](https://evensong-phi.vercel.app/) 的非商业汉化静态镜像，原页面未署名作者，因此不臆造署名：菜单、选项、操作说明、Boss 名称与字幕对白均已本地化，英文原声保留、字幕为中文；游戏为未打包的 ES module + three.js r186，源码在 `src/` 下可直接修改。随附 `CREDITS.md`、`THIRD-PARTY-NOTICES.md` 与 `licenses/`。支持键鼠、手柄与触屏，完整约 55 MB。
+
+`keraunos/` 是 [Keraunos](https://keraunos.yugen-matsuni.chatgpt.site/) 的非商业汉化静态镜像，原页面未署名作者，因此不臆造署名：机库、机体与武器说明、任务提示、操作说明、暂停菜单与字幕均已本地化，日文原声保留、字幕为中文；游戏为未打包的 ES module + three.js r187 WebGPU 构建，保留了原站 Service Worker 与 `d/` 中的编码素材，完整约 235 MB（含桌面与移动端两套素材）。随附 `CREDITS.md`、`THIRD-PARTY-NOTICES.md` 与 `licenses/`。需要支持 WebGPU 的浏览器，支持键鼠与触屏。
+
+`checkmate-temple/` 是 [Checkmate Temple](https://checkmate-temple.vercel.app/) 的非商业汉化静态镜像，原页面未署名作者，因此不臆造署名：标题、载入界面、操作说明、状态提示、菜单、结局、神殿内全部可阅读铭文与字幕均已本地化，英文原声保留、字幕为中文；没有原字幕的低语与囚徒台词继续保持无字幕，未臆造译文。游戏为未打包的 ES module + three.js r170 + Rapier 物理 + chess.js 规则，桌面与移动端两套素材齐备，完整约 33 MB。原站的 Vercel Analytics 已移除。随附 `CREDITS.md`、`THIRD-PARTY-NOTICES.md` 与 `licenses/`（three.js MIT、Rapier / Draco Apache-2.0、chess.js BSD-2-Clause、Cinzel OFL）。支持键鼠与触屏，建议佩戴耳机。
+
+`unsung-vale/` 是 [Unsung Vale](https://github.com/Leonxlnx/unsung-vale)（MIT 许可）的非商业汉化静态镜像：标题、载入界面、开场旁白、目标与罗盘、暂停与设置菜单、制作名单、剧情、请托、人物对白、敌人与首领提示、试炼、护符与遗物说明等全部游戏内文本均已本地化；游戏没有配音与字幕。原作是 Vite 构建的 three.js 第三人称开放世界动作角色扮演，世界完全由代码生成；本地化在源码层完成并以 `--base=./` 重新构建，以支持子目录部署，运行时全部依赖（模型、音频、地形数据、字体）均已本地化，完整约 39 MB。随附 `LICENSE.md`、`CREDITS.md`、`CREDITS-AUDIO.md`（原项目音乐与音效署名）、`THIRD-PARTY-NOTICES.md` 与 `licenses/`（three.js MIT、three-mesh-bvh MIT、Inter / Josefin Sans / Jost OFL）。只支持键鼠（指针锁定）与手柄，不支持触屏，建议佩戴耳机。
+
+`golden-hour/` 是 [GOLDEN HOUR — Solstice Hotel](https://claude.ai/artifact/6N9gzgYJDa925a1tVxps2f) 的非商业汉化静态镜像。原页面未署名作者，因此不臆造署名：载入提示、主菜单、设置、枪匠、武器与涂装名称、HUD、勋章、暂停菜单、比分与计分板、赛后结算，以及酒店内的场景标牌均已本地化；游戏为单文件 `dist/game.js`（内嵌 three.js r180），完整约 4.4 MB。仅支持键鼠并需要指针锁定，不支持触屏与手柄，单人对抗 5v5 机器人。随附 `CREDITS.md`、`THIRD-PARTY-NOTICES.md` 与 `licenses/`（three.js MIT）。
 
 ## 本地预览
 

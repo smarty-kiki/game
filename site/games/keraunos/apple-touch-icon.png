@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#03040b">
+<meta name="apple-mobile-web-app-title" content="KERAUNOS">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<title>KERAUNOS</title>
+<!-- 検索と AI の収集に載せない（spec REQ-012） -->
+<meta name="robots" content="noindex, nofollow, noarchive, noimageindex, noai, noimageai">
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: #03040b;
+    overflow: hidden;
+    color: #cfe4ff;
+    font-family: "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  }
+  canvas { display: block; }
+  /* 操作の案内は始めの数秒だけ出す */
+  #hint {
+    position: fixed;
+    left: 28px;
+    top: 24px;
+    font-size: 12px;
+    line-height: 1.9;
+    letter-spacing: 0.06em;
+    color: rgba(232, 236, 239, 0.72);
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    animation: hintOut 1.2s ease 14s forwards;
+  }
+  @keyframes hintOut { to { opacity: 0; } }
+  /* 体力バー・攻撃名・警告・案内が出たら、操作の案内は消す（上の部品と重ならないように。src/main.js の hintStep） */
+  html.hint-off #hint { opacity: 0 !important; }
+  #hint b { color: var(--ui-ink); font-weight: 600; }
+  /* 画面の文字とバー：光らせず、細い線と抑えた色で計器のように見せる。強い色は危険の赤だけ */
+  :root {
+    --ui-num: "DIN Condensed", "DIN Alternate", "Avenir Next Condensed", "Helvetica Neue", sans-serif;
+    --ui-jp: "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+    --ui-ink: #e8ecef; --ui-dim: rgba(232, 236, 239, .55); --ui-line: rgba(232, 236, 239, .28);
+    --ui-amber: #e9b872; --ui-red: #ff4a36;
+  }
+  /* 中国語・韓国語は漢字の字形とハングルを言語の書体で出す（spec REQ-016。src/i18n.js の FONTS と同じ） */
+  html[lang="zh-Hans"] { --ui-jp: "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif; }
+  html[lang="zh-Hant"] { --ui-jp: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif; }
+  html[lang="ko"] { --ui-jp: "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif; }
+  .ui { position: fixed; pointer-events: none; z-index: 5; color: var(--ui-ink); font-family: var(--ui-jp); text-shadow: 0 1px 2px rgba(0,0,0,.7); }
+  .ui-label { font: 400 13px/1 var(--ui-num); letter-spacing: .22em; color: var(--ui-dim); }
+  #uiScore { right: 28px; top: 22px; text-align: right; }
+  #uiScore b { display: block; font: 400 34px/1 var(--ui-num); letter-spacing: .06em; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  #uiShield { left: 28px; bottom: 34px; width: 280px; }
+  #uiShield .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+  #uiShield b { font: 400 24px/1 var(--ui-num); font-variant-numeric: tabular-nums; }
+  .ui-track { position: relative; height: 7px; background: rgba(232,236,239,.10); transform: skewX(-24deg); overflow: hidden; }
+  .ui-track i { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; }
+  .ui-track .fill { background: var(--ui-ink); transition: width .1s linear; }
+  .ui-track .lag { background: var(--ui-red); transition: width .6s ease .22s; }
+  .ui-track::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 12px, rgba(0,0,0,.75) 12px 14px); }
+  #uiShield.low b, #uiShield.low .ui-label { color: var(--ui-red); }
+  #uiShield.low .ui-track .fill { background: var(--ui-red); }
+  .ui-bossbar { left: 0; right: 0; top: 22px; display: flex; justify-content: center; opacity: 0; transition: opacity .4s; }
+  .ui-bossbar > div { width: min(640px, 56vw); }
+  .ui-bossbar .row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; font-size: 13px; font-weight: 500; letter-spacing: .24em; }
+  .ui-bossbar .ui-track { height: 6px; }
+  .ui-bossbar .ui-track .fill { background: var(--ui-red); }
+  .ui-bossbar .ui-track .lag { background: var(--ui-ink); transition: width .7s ease .25s; }
+  .ui-bossbar .ui-track::after { background: repeating-linear-gradient(90deg, transparent 0 22px, rgba(0,0,0,.75) 22px 24px); }
+  /* 通信：顔窓（表情）＋名前＋本文。味方は琥珀、敵は赤の線。声が出ている間は名前の横の3本が動く */
+  #uiComm { --c: var(--ui-amber); left: 28px; bottom: 96px; width: min(580px, 62vw); display: flex; gap: 12px; align-items: stretch; opacity: 0; transform: translateX(-10px); transition: opacity .25s, transform .25s; padding: 8px 40px 8px 8px; background: linear-gradient(90deg, rgba(4,7,11,.78), rgba(4,7,11,.5) 70%, rgba(4,7,11,0)); border-left: 2px solid var(--c); }
+  #uiComm[data-side="enemy"] { --c: var(--ui-red); background: linear-gradient(90deg, rgba(30,4,2,.78), rgba(18,4,4,.5) 70%, rgba(4,7,11,0)); }
+  #uiComm.open { opacity: 1; transform: none; }
+  #uiComm .face { position: relative; flex: 0 0 auto; width: 76px; height: 76px; overflow: hidden; border: 1px solid var(--c); background: #05070b; }
+  #uiComm .face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  #uiComm .face .scan { position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px); pointer-events: none; }
+  #uiComm.open .face img { animation: commIn .32s steps(4) 1; }
+  @keyframes commIn { 0% { opacity: .2; transform: translateX(-3px); } 50% { opacity: .9; transform: translateX(2px); } 100% { opacity: 1; transform: none; } }
+  #uiComm .body { flex: 1 1 auto; min-width: 0; padding-top: 3px; }
+  #uiComm .row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+  #uiComm .who { font-size: 11px; font-weight: 600; letter-spacing: .24em; color: var(--c); }
+  #uiComm .lvl { display: inline-flex; gap: 2px; align-items: flex-end; height: 9px; opacity: .35; }
+  #uiComm .lvl i { width: 2px; height: 3px; background: var(--c); }
+  #uiComm.talk .lvl { opacity: 1; }
+  #uiComm.talk .lvl i { animation: commLvl .32s ease-in-out infinite alternate; }
+  #uiComm.talk .lvl i:nth-child(2) { animation-delay: .11s; } #uiComm.talk .lvl i:nth-child(3) { animation-delay: .2s; }
+  @keyframes commLvl { from { height: 2px; } to { height: 9px; } }
+  #uiComm .say { display: block; font-size: 15px; line-height: 1.55; font-weight: 400; letter-spacing: .03em; }
+  #uiWarn { left: 0; right: 0; top: 22%; text-align: center; opacity: 0; z-index: 6; padding: 12px 0 14px; background: linear-gradient(90deg, rgba(40,4,0,0), rgba(40,4,0,.72) 22%, rgba(40,4,0,.72) 78%, rgba(40,4,0,0)); }
+  #uiWarn::before, #uiWarn::after { content: ''; position: absolute; left: 12%; right: 12%; height: 5px; background: repeating-linear-gradient(115deg, var(--ui-red) 0 14px, transparent 14px 28px); }
+  #uiWarn::before { top: -2px; } #uiWarn::after { bottom: -2px; }
+  #uiWarn b { display: block; font: 400 56px/1 var(--ui-num); letter-spacing: .34em; text-indent: .34em; color: var(--ui-red); }
+  #uiWarn span { display: block; margin-top: 6px; font-size: 13px; letter-spacing: .34em; color: var(--ui-ink); }
+  #uiAlert { left: 50%; transform: translateX(-50%); top: 70px; white-space: nowrap; font-size: 14px; font-weight: 500; letter-spacing: .28em; color: var(--ui-ink); opacity: 0; padding: 5px 18px; border-top: 1px solid var(--ui-red); border-bottom: 1px solid var(--ui-red); background: rgba(40,4,0,.5); }
+  #uiClear { left: 0; right: 0; top: 24%; text-align: center; opacity: 0; transition: opacity .6s; z-index: 6; }
+  #uiClear b { display: block; font: 400 72px/1 var(--ui-num); letter-spacing: .24em; text-indent: .24em; }
+  #uiClear .jp { display: block; margin-top: 10px; font-size: 14px; letter-spacing: .4em; color: var(--ui-amber); }
+  #uiClear .res { display: flex; justify-content: center; gap: 44px; margin-top: 26px; }
+  #uiClear .res div b { font-size: 40px; letter-spacing: .06em; text-indent: 0; margin-top: 4px; }
+  #uiClear .again { margin-top: 24px; font-size: 12px; letter-spacing: .24em; color: var(--ui-dim); }
+
+  #loading {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    letter-spacing: 0.3em;
+    color: rgba(160, 210, 255, 0.8);
+    background: #03040b;
+    transition: opacity 0.6s ease;
+  }
+  #loading.hide { opacity: 0; pointer-events: none; }
+
+  /* ---- タッチの操作（spec REQ-014。src/touch.js）：<html class="touch"> のときだけ。今の画面の部品と同じ白の細い線・琥珀・斜めの帯 ---- */
+  html.touch, html.touch body { touch-action: none; overscroll-behavior: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+  #touch { position: fixed; inset: 0; z-index: 8; pointer-events: none; --ts: .75; --sl: env(safe-area-inset-left, 0px); --sr: env(safe-area-inset-right, 0px); --sb: env(safe-area-inset-bottom, 0px); }
+  #touch [hidden] { display: none !important; }
+  #touch button { -webkit-appearance: none; appearance: none; margin: 0; padding: 0; font: inherit; color: inherit; background: none; border: 0; outline: none; }
+  #touch .t-zone { position: absolute; left: 0; top: 22%; bottom: 0; width: 44%; pointer-events: auto; }
+  /* スティック：細い輪と4方向の目盛り、中心の小さな琥珀の点。触れていない間は左下で薄く待つ */
+  /* --ts：画面の高さに合わせた大きさの倍率（src/touch.js が入れる。0.58〜0.76） */
+  #touch .t-stick { position: absolute; width: calc(132px * var(--ts)); height: calc(132px * var(--ts)); border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, rgba(4,7,11,.10) 0 38%, rgba(4,7,11,.42) 70%, rgba(4,7,11,.18) 100%);
+    box-shadow: inset 0 0 0 1px rgba(232,236,239,.26), inset 0 0 0 9px rgba(4,7,11,.0), 0 6px 24px rgba(0,0,0,.25);
+    -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: opacity .25s, box-shadow .2s; }
+  #touch .t-stick::before { content: ''; position: absolute; inset: 7px; border-radius: 50%;
+    background: conic-gradient(from -4deg, rgba(232,236,239,.55) 0 8deg, transparent 8deg 90deg, rgba(232,236,239,.55) 90deg 98deg, transparent 98deg 180deg, rgba(232,236,239,.55) 180deg 188deg, transparent 188deg 270deg, rgba(232,236,239,.55) 270deg 278deg, transparent 278deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 calc(100% - 5px), #000 calc(100% - 4px)); mask: radial-gradient(circle, transparent 0 calc(100% - 5px), #000 calc(100% - 4px)); opacity: .7; }
+  #touch .t-stick.idle { left: calc(var(--sl) + 24px); top: auto !important; bottom: calc(var(--sb) + 16px); opacity: .5; }
+  #touch .t-stick:not(.idle) { box-shadow: inset 0 0 0 1px rgba(233,184,114,.55), 0 0 28px rgba(233,184,114,.12); }
+  #touch .t-dir { position: absolute; inset: 0; border-radius: 50%; opacity: 0;
+    background: conic-gradient(from 60deg, transparent 0 0deg, rgba(233,184,114,.0) 0deg, rgba(233,184,114,.85) 30deg, rgba(233,184,114,0) 60deg, transparent 60deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 calc(100% - 3px), #000 calc(100% - 2px)); mask: radial-gradient(circle, transparent 0 calc(100% - 3px), #000 calc(100% - 2px)); }
+  #touch .t-knob { position: absolute; left: 50%; top: 50%; width: calc(54px * var(--ts)); height: calc(54px * var(--ts)); margin: calc(-27px * var(--ts)) 0 0 calc(-27px * var(--ts)); border-radius: 50%;
+    background: radial-gradient(circle at 50% 38%, rgba(232,236,239,.22), rgba(232,236,239,.06) 62%, rgba(4,7,11,.35));
+    box-shadow: inset 0 0 0 1px rgba(232,236,239,.55), 0 4px 14px rgba(0,0,0,.45); }
+  #touch .t-knob::after { content: ''; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: var(--ui-amber); box-shadow: 0 0 8px rgba(233,184,114,.8); }
+  #touch .t-stick.dodge { box-shadow: inset 0 0 0 2px rgba(233,184,114,.9), 0 0 36px rgba(233,184,114,.35); }
+  /* 4つのボタン：菱形。暗い透けた面に白の細い輪、記号は細い線。押すと琥珀に光る */
+  #touch .t-pad { position: absolute; right: calc(var(--sr) + 12px); bottom: calc(var(--sb) + 6px); width: 204px; height: 204px; transform: scale(var(--ts)); transform-origin: 100% 100%; }
+  #touch .t-btn { position: absolute; pointer-events: auto; width: 66px; height: 66px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 50% 30%, rgba(232,236,239,.07), rgba(4,7,11,.52) 68%);
+    box-shadow: inset 0 0 0 1px rgba(232,236,239,.22), 0 6px 18px rgba(0,0,0,.35);
+    -webkit-backdrop-filter: blur(8px) saturate(120%); backdrop-filter: blur(8px) saturate(120%); transition: transform .06s, box-shadow .12s, background .12s; }
+  #touch .t-s { left: 69px; top: 136px; } #touch .t-w { left: 2px; top: 69px; } #touch .t-e { left: 136px; top: 69px; } #touch .t-n { left: 69px; top: 2px; }
+  #touch .t-ring { position: absolute; inset: -5px; width: calc(100% + 10px); height: calc(100% + 10px); transform: rotate(-90deg); pointer-events: none; }
+  #touch .t-ring circle { fill: none; stroke-width: 1.4; }
+  #touch .t-track { stroke: rgba(232,236,239,.10); }
+  #touch .t-gauge { stroke: rgba(232,236,239,.55); transition: stroke-dashoffset .08s linear, stroke .2s; }
+  #touch .t-btn.wait .t-gauge { stroke: rgba(232,236,239,.32); }
+  #touch .t-w:not(.wait) .t-gauge { stroke: var(--ui-amber); }
+  #touch .t-glyph { width: 22px; height: 22px; fill: none; stroke: var(--ui-ink); stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; margin-top: 2px; transition: stroke .12s; }
+  #touch .t-name { margin-top: 3px; font: 500 9px/1 var(--ui-jp); letter-spacing: .1em; color: var(--ui-dim); white-space: nowrap; }
+  /* 訳した名前が長いとき（Homing Missiles など）は、丸の中で2行に折る（spec REQ-016） */
+  html:not([lang="ja"]) #touch .t-name { max-width: 58px; white-space: normal; text-align: center; line-height: 1.08; letter-spacing: .03em; }
+  /* 英語では BRAKE / BOOST の下の訳が同じ語になるので出さない */
+  html[lang="en"] #touch .t-pill em { display: none; }
+  #touch .t-note { position: absolute; right: -3px; top: -3px; min-width: 0; font: 400 12px/1 var(--ui-num); letter-spacing: .04em; color: var(--ui-ink); text-shadow: 0 1px 2px rgba(0,0,0,.8); }
+  #touch .t-note:empty { display: none; }
+  #touch .t-btn.wait .t-glyph { opacity: .42; }
+  #touch .t-btn.empty { opacity: .28; pointer-events: none; }
+  #touch .t-btn.on { transform: scale(.93); background: radial-gradient(circle at 50% 35%, rgba(233,184,114,.30), rgba(233,184,114,.08) 64%, rgba(4,7,11,.5));
+    box-shadow: inset 0 0 0 1px rgba(233,184,114,.85), 0 0 22px rgba(233,184,114,.32); }
+  #touch .t-btn.on .t-glyph { stroke: var(--ui-amber); }
+  #touch .t-btn.on .t-name { color: var(--ui-amber); }
+  /* 小さいボタン（爆雷・宙返り・3つ目の副武装）：菱形の左に縦に並べる */
+  #touch .t-minis { position: absolute; right: calc(var(--sr) + 16px + 212px * var(--ts)); bottom: calc(var(--sb) + 6px + 10px * var(--ts)); transform: scale(var(--ts)); transform-origin: 100% 100%; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  #touch .t-mini { position: relative; width: 48px; height: 48px; }
+  #touch .t-mini .t-name { margin: 0; font-size: 10px; color: var(--ui-ink); letter-spacing: .06em; }
+  #touch .t-mini .t-note { right: -6px; top: -5px; font-size: 12px; }
+  #touch .t-mini.wait { opacity: .5; }
+  /* 加速・減速：斜めの帯（シールドの線と同じ傾き） */
+  #touch .t-pill { position: absolute; pointer-events: auto; width: 116px; height: 36px; display: flex; align-items: center; justify-content: center; gap: 8px; transform: skewX(-24deg);
+    background: linear-gradient(90deg, rgba(4,7,11,.55), rgba(4,7,11,.38)); box-shadow: inset 0 0 0 1px rgba(232,236,239,.24); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: box-shadow .12s, background .12s; }
+  #touch .t-pill > * { transform: skewX(24deg); }
+  #touch .t-pill { transform: scale(var(--ts)) skewX(-24deg); }
+  #touch .t-pill span { font: 400 14px/1 var(--ui-num); letter-spacing: .3em; text-indent: .3em; color: var(--ui-ink); }
+  #touch .t-pill em { font: 500 9px/1 var(--ui-jp); font-style: normal; letter-spacing: .12em; color: var(--ui-dim); }
+  #touch .t-boost { right: calc(var(--sr) + 12px + 46px * var(--ts)); bottom: calc(var(--sb) + 10px + 212px * var(--ts)); transform-origin: 100% 100%; }
+  #touch .t-boost span::after { content: ' \00BB'; letter-spacing: 0; color: var(--ui-amber); }
+  #touch .t-brake { left: calc(var(--sl) + 26px); bottom: calc(var(--sb) + 24px + 146px * var(--ts)); transform-origin: 0 100%; }
+  #touch .t-pill.on { background: linear-gradient(90deg, rgba(233,184,114,.30), rgba(233,184,114,.12)); box-shadow: inset 0 0 0 1px rgba(233,184,114,.9), 0 0 20px rgba(233,184,114,.25); }
+  #touch .t-pill.on span, #touch .t-pill.on em { color: var(--ui-amber); }
+  /* 一時停止のボタン（spec REQ-017。src/touch.js）：左上のシールドの右。細い輪に縦の2本線。触れる所は 44px、見える輪は 30px */
+  #touch .t-pause { position: absolute; pointer-events: auto; left: calc(var(--sl) + 178px); top: 6px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  #touch .t-pause::before { content: ''; position: absolute; inset: 7px; border-radius: 50%; background: radial-gradient(circle at 50% 30%, rgba(232,236,239,.07), rgba(4,7,11,.52) 68%);
+    box-shadow: inset 0 0 0 1px rgba(232,236,239,.3), 0 4px 14px rgba(0,0,0,.3); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: box-shadow .12s, background .12s; }
+  #touch .t-pause i { position: relative; width: 2.5px; height: 11px; background: var(--ui-ink); transition: background .12s; }
+  #touch .t-pause:active::before { background: radial-gradient(circle at 50% 35%, rgba(233,184,114,.30), rgba(4,7,11,.5)); box-shadow: inset 0 0 0 1px rgba(233,184,114,.85); }
+  #touch .t-pause:active i { background: var(--ui-amber); }
+  /* シールドの右だとボスの体力バーに重なる画面（狭い・左に切り欠き）では、シールドの下へ置く（.low は src/touch.js が体力バーの位置を測って付ける） */
+  #touch .t-pause.low { left: calc(var(--sl) + 6px); top: 62px; }
+  /* タッチのときの画面の部品の置き直し：指の下を空ける */
+  html.touch #hint { display: none; }
+  html.touch #uiShield { left: calc(env(safe-area-inset-left, 0px) + 14px); top: 10px; bottom: auto; width: 160px; }
+  html.touch #uiShield b { font-size: 17px; }
+  html.touch #uiShield .ui-label { font-size: 11px; }
+  html.touch #uiScore { right: calc(env(safe-area-inset-right, 0px) + 14px); top: 8px; }
+  html.touch #uiScore .ui-label { font-size: 11px; }
+  html.touch #uiScore b { font-size: 20px; margin-top: 2px; }
+  /* 通信の窓は画面の下の中央（スティックとボタンの間）。上に置くと前が見えなかった（11/9） */
+  html.touch #uiComm { left: 50%; top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); width: min(360px, 42vw); padding: 4px 18px 4px 4px; gap: 8px; transform: translate(-50%, 8px);
+    background: linear-gradient(90deg, rgba(4,7,11,.66), rgba(4,7,11,.4) 70%, rgba(4,7,11,0)); }
+  html.touch #uiComm.open { transform: translate(-50%, 0); }
+  html.touch #uiComm .face { width: 36px; height: 36px; }
+  html.touch #uiComm .row { margin-bottom: 3px; }
+  html.touch #uiComm .who { font-size: 9px; }
+  html.touch #uiComm .say { font-size: 11.5px; line-height: 1.4; }
+  /* ボス・重巡洋艦の体力：スマホでは細くして上の中央に置き、左上の自機のシールドと右上のレーダーの間を空ける（11/9、シールドと被りそうだった） */
+  html.touch .ui-bossbar { top: 12px; }
+  html.touch .ui-bossbar > div { width: min(300px, 34vw); }
+  html.touch .ui-bossbar .row { margin-bottom: 4px; font-size: 11px; letter-spacing: .2em; }
+  html.touch .ui-bossbar .ui-track { height: 5px; }
+  /* iPhone の Safari で開いたとき：全画面で遊ぶ方法の案内（src/boot.js が出す。閉じられる） */
+  #gpulost { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(4, 8, 14, .84); color: #cfe9ff; font: 600 14px/1.6 system-ui, sans-serif; letter-spacing: .14em; text-align: center; }
+  #a2hs { position: fixed; z-index: 40; left: 50%; top: 58px; transform: translateX(-50%); display: flex; align-items: center; gap: 7px; padding: 7px 8px 7px 14px; white-space: nowrap;
+    background: linear-gradient(90deg, rgba(4,7,11,.82), rgba(4,7,11,.72)); box-shadow: inset 0 0 0 1px rgba(233,184,114,.45); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    color: var(--ui-dim); font: 500 11px/1 var(--ui-jp); letter-spacing: .08em; }
+  #a2hs[hidden] { display: none; }
+  #a2hs b { color: var(--ui-ink); font-weight: 600; } #a2hs em { font-style: normal; color: var(--ui-amber); }
+  #a2hs button { margin-left: 4px; width: 26px; height: 26px; border: 0; background: none; color: var(--ui-ink); font: 400 16px/1 var(--ui-num); cursor: pointer; }
+  /* ---- 一時停止のメニュー（spec REQ-017。src/pauseMenu.js）：暗い半透明の面に白の細い線・琥珀・斜めの帯。今の画面の部品にそろえる ---- */
+  html.paused .ui, html.paused .ui * { animation-play-state: paused !important; }
+  #pause { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: max(10px, env(safe-area-inset-top, 0px)) 16px max(10px, env(safe-area-inset-bottom, 0px));
+    background: radial-gradient(ellipse at 50% 50%, rgba(3,4,11,.5), rgba(3,4,11,.8)); -webkit-backdrop-filter: blur(5px) saturate(85%); backdrop-filter: blur(5px) saturate(85%);
+    color: var(--ui-ink); font-family: var(--ui-jp); text-shadow: 0 1px 2px rgba(0,0,0,.7); -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+  #pause[hidden] { display: none; }
+  #pause .p-panel { display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 100%; }
+  #pause .p-title { font: 400 56px/1 var(--ui-num); letter-spacing: .34em; text-indent: .34em; }
+  #pause .p-jp { margin: -4px 0 8px; font-size: 12px; letter-spacing: .4em; text-indent: .4em; color: var(--ui-amber); }
+  #pause button { -webkit-appearance: none; appearance: none; margin: 0; padding: 0; font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  #pause .p-btn { min-width: 260px; height: 42px; padding: 0 22px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 12px; transform: skewX(-24deg);
+    background: linear-gradient(90deg, rgba(4,7,11,.62), rgba(4,7,11,.44)); box-shadow: inset 0 0 0 1px rgba(232,236,239,.26); transition: box-shadow .12s, background .12s; }
+  #pause .p-btn > * { transform: skewX(24deg); white-space: nowrap; }
+  #pause .p-btn span { font: 400 17px/1 var(--ui-num); letter-spacing: .3em; text-indent: .3em; }
+  #pause .p-btn em { font: 500 11px/1 var(--ui-jp); font-style: normal; letter-spacing: .12em; color: var(--ui-dim); }
+  #pause .p-resume { box-shadow: inset 0 0 0 1px rgba(233,184,114,.7); }
+  #pause .p-resume span::after { content: ' \00BB'; letter-spacing: 0; color: var(--ui-amber); }
+  #pause .p-btn:focus-visible, #pause .p-btn:active { outline: none; background: linear-gradient(90deg, rgba(233,184,114,.26), rgba(233,184,114,.08)); box-shadow: inset 0 0 0 1px rgba(233,184,114,.9), 0 0 20px rgba(233,184,114,.18); }
+  #pause .p-btn:focus-visible em, #pause .p-btn:active em { color: var(--ui-amber); }
+  @media (hover: hover) { #pause .p-btn:hover { box-shadow: inset 0 0 0 1px rgba(233,184,114,.9); } }
+  #pause.armed .p-hangar { background: linear-gradient(90deg, rgba(40,4,0,.72), rgba(40,4,0,.5)); box-shadow: inset 0 0 0 1px var(--ui-red); }
+  #pause .p-confirm { min-height: 1.3em; margin-top: -4px; font-size: 11px; letter-spacing: .12em; color: var(--ui-red); text-align: center; visibility: hidden; }
+  #pause.armed .p-confirm { visibility: visible; }
+  /* 音量：シールドの線と同じ斜めの区切りの帯。−・＋・帯に触れる・矢印のキーで 10 刻みに変える */
+  #pause .p-vol { display: grid; grid-template-columns: 74px 30px 150px 30px 34px; align-items: center; gap: 4px; outline: none; }
+  #pause .p-track { margin: 0 6px; }
+  #pause .p-label { display: flex; flex-direction: column; gap: 4px; font: 400 15px/1 var(--ui-num); letter-spacing: .24em; color: var(--ui-dim); }
+  #pause .p-label em { font: 500 9px/1 var(--ui-jp); font-style: normal; letter-spacing: .1em; white-space: nowrap; }
+  #pause .p-step { width: 30px; height: 30px; font: 300 20px/1 var(--ui-num); color: var(--ui-ink); }
+  #pause .p-track { display: flex; gap: 3px; height: 12px; padding: 9px 0; transform: skewX(-24deg); cursor: pointer; touch-action: none; }
+  #pause .p-track i { flex: 1; background: rgba(232,236,239,.12); transition: background .08s; }
+  #pause .p-track i.on { background: var(--ui-ink); }
+  #pause .p-vol:focus-visible .p-track i.on, #pause .p-vol.drag .p-track i.on { background: var(--ui-amber); }
+  #pause .p-vol:focus-visible .p-label { color: var(--ui-amber); }
+  #pause .p-num { font: 400 19px/1 var(--ui-num); text-align: right; font-variant-numeric: tabular-nums; }
+  #pause .p-keys { margin-top: 2px; font-size: 11px; letter-spacing: .14em; color: var(--ui-dim); }
+  #pause .p-keys b { font: 400 13px/1 var(--ui-num); letter-spacing: .14em; color: var(--ui-ink); }
+  html.touch #pause .p-keys { display: none; }
+  /* 英語では見出しとボタンの下の訳が同じ語になるので出さない */
+  html[lang="en"] #pause .p-btn em, html[lang="en"] #pause .p-label em { display: none; }
+  /* 見出しの下の訳は、日本語・中国語・韓国語のときだけ出す（ほかは PAUSE と同じ語になる） */
+  html:not([lang="ja"]):not([lang^="zh"]):not([lang="ko"]) #pause .p-jp { display: none; }
+  /* 低い画面（iPhone の横画面・Safari のバー）では詰める */
+  @media (max-height: 460px) {
+    #pause .p-panel { gap: 7px; }
+    #pause .p-title { font-size: 34px; }
+    #pause .p-jp { margin: -2px 0 2px; font-size: 10px; }
+    #pause .p-btn { min-width: 230px; height: 34px; }
+    #pause .p-btn span { font-size: 15px; }
+  }
+  @media (max-height: 320px) {
+    #pause .p-panel { gap: 4px; }
+    #pause .p-title { font-size: 26px; }
+    #pause .p-jp { display: none; }
+    #pause .p-btn { height: 30px; }
+    #pause .p-step { height: 26px; }
+  }
+  /* 操作の案内（REQ-019。src/controlsGuide.js）：画面下の武装の並びの上に約2秒。遊ぶ画面の主役にはかけない（端が暗く溶ける細い帯） */
+  #guide { position: fixed; left: 50%; transform: translateX(-50%); z-index: 6; max-width: min(560px, 88vw); padding: 5px 16px; box-sizing: border-box; pointer-events: none; white-space: nowrap; text-align: center;
+    background: linear-gradient(90deg, rgba(4,7,11,0), rgba(4,7,11,.62) 18%, rgba(4,7,11,.62) 82%, rgba(4,7,11,0));
+    color: var(--ui-ink); font: 500 13px/1.5 var(--ui-jp); letter-spacing: .08em; text-shadow: 0 1px 2px rgba(0,0,0,.9); transition: opacity .4s ease; }
+  #guide[hidden] { display: none; }
+  #guide.out { opacity: 0; }
+  html.touch #guide { font-size: 12px; }
+  html.paused #guide { visibility: hidden; }
+  /* 一時停止の操作の一覧（REQ-019）：メニューの右に並べる。キー・ボタンの名前と働き */
+  #pause .p-wrap { display: flex; align-items: center; gap: 26px; max-width: 100%; }
+  #pause .p-ops { display: flex; flex-direction: column; gap: 5px; min-width: 214px; padding: 12px 16px; box-sizing: border-box; background: linear-gradient(90deg, rgba(4,7,11,.62), rgba(4,7,11,.44)); box-shadow: inset 0 0 0 1px rgba(232,236,239,.22); }
+  #pause .p-ops-t { font: 400 12px/1 var(--ui-jp); letter-spacing: .3em; color: var(--ui-amber); margin-bottom: 3px; }
+  #pause .p-op { display: flex; gap: 10px; align-items: baseline; font: 500 12px/1.3 var(--ui-jp); }
+  #pause .p-op i { min-width: 96px; font: 400 12px/1 var(--ui-num); font-style: normal; letter-spacing: .06em; color: var(--ui-ink); white-space: nowrap; }
+  #pause .p-op span { display: flex; flex-wrap: wrap; column-gap: 8px; color: var(--ui-dim); }
+  @media (max-height: 460px) { #pause .p-op { font-size: 11px; } #pause .p-ops { padding: 8px 12px; gap: 3px; } }
+  @media (max-width: 480px) { #pause .p-wrap { gap: 14px; } #pause .p-ops { min-width: 0; } #pause .p-op i { min-width: 80px; } }
+  /* 縦向きでは横向きを頼む */
+  #rotate { display: none; }
+  @media (orientation: portrait) {
+    html.touch #rotate { display: flex; position: fixed; inset: 0; z-index: 50; align-items: center; justify-content: center; flex-direction: column; gap: 18px; background: #03040b; color: var(--ui-ink); font: 500 13px/1.8 var(--ui-jp); letter-spacing: .24em; text-align: center; }
+    html.touch #rotate b { font: 400 22px/1 var(--ui-num); letter-spacing: .4em; text-indent: .4em; color: var(--ui-amber); }
+    html.touch #rotate i { width: 46px; height: 76px; border-radius: 8px; box-shadow: inset 0 0 0 1px rgba(232,236,239,.6); animation: rotHint 2.4s ease-in-out infinite; }
+  }
+  @keyframes rotHint { 0%, 25% { transform: rotate(0); } 55%, 100% { transform: rotate(-90deg); } }
+</style>
+<script>
+// 読み込みの対応表。宇宙空間の物（src/space/、岩・氷・金属の塊と小惑星帯）は既定で入れ、src/fx/world.js を src/space/worldSpace.js に差し替える。
+// ?space=0 で今までの岩に戻す。確認用の起動（?test=1）は試験と他の担当の撮影を変えないよう今までの岩のままで、?space=1 で入る
+// ゲームのコードは、読み込みのたびに違う番号の住所（/_v番号/src/…）で取りにいく（tools/serve.py が同じ中身を返す）。
+// ブラウザに残った古い写しを使って、直したコードが画面に出ないことがあったため（11/8）
+window.__rsV = Date.now().toString(36);
+{
+  const q = new URLSearchParams(location.search);
+  const V = window.__rsV;
+  const imports = {
+    'three': './vendor/three-r187/build/three.webgpu.js',
+    'three/webgpu': './vendor/three-r187/build/three.webgpu.js',
+    'three/tsl': './vendor/three-r187/build/three.tsl.js',
+    'three/addons/': './vendor/three-r187/examples/jsm/',
+  };
+  if (q.get('space') === '1' || (q.get('space') !== '0' && q.get('test') !== '1')) { imports['./src/fx/world.js'] = './src/space/worldSpace.js'; imports[`./_v${V}/src/fx/world.js`] = `./_v${V}/src/space/worldSpace.js`; }
+  const map = document.createElement('script');
+  map.type = 'importmap';
+  map.textContent = JSON.stringify({ imports });
+  document.currentScript.after(map);
+}
+</script>
+</head>
+<body>
+<div id="loading">LOADING</div>
+<div id="rotate"><i></i><b>KERAUNOS</b>端末を横向きにしてください</div>
+<div id="a2hs" hidden><span>全画面で遊ぶには</span><b>共有</b><em>→</em><b>ホーム画面に追加</b><span>から開いてください</span><button type="button" aria-label="閉じる">×</button></div>
+<div id="hint">
+  <b>矢印 / WASD</b> 移動　<b>SHIFT</b> 加速　<b>SPACE</b> 減速　<b>Q E</b> 傾ける（2回押しで回避）　<b>ESC</b> 一時停止
+</div>
+<script type="module">
+  // 番号つきの住所が使える配信（tools/serve.py）なら、そちらで読む。普通の配信（http.server）なら今までの住所で読む
+  // 公開版：素材は中継（sw.js）が元に戻して渡す。この版の中継がページを受け持つまで待ってからゲームを読む
+  if ('serviceWorker' in navigator) {
+    const sw = navigator.serviceWorker;
+    const tq = new URLSearchParams(location.search).get('touch');
+    const mobile = tq === '1' || (tq !== '0' && matchMedia('(pointer: coarse)').matches); // スマホには縮めた画像の版を配る（spec REQ-014）
+    const want = new URL(`./sw.js?v=37acd932dec07e5c5bcf433f67b4ad63.18e5142a${mobile ? '&m=1' : ''}`, location.href).href;
+    const reg = await sw.register(want);
+    for (let i = 0; sw.controller?.scriptURL !== want; i++) {
+      // 前の版の中継が先読みをしている間は、ブラウザが入れ替えない。先読みをやめてもらう（11/9、スマホで入れ替わらず止まった）
+      for (const w of [sw.controller, reg.active]) if (w && w.scriptURL !== want) w.postMessage({ type: 'prefetch-stop' });
+      if (reg.active?.scriptURL === want) reg.active.postMessage('claim');
+      await new Promise((r) => { sw.addEventListener('controllerchange', r, { once: true }); setTimeout(r, 500); });
+      // 8 秒たっても入れ替わらなければ、登録を消して 1 回だけ自動で読み直す
+      if (i === 16) {
+        let tried = false; try { tried = sessionStorage.getItem('keraunos.swreset') === '1'; sessionStorage.setItem('keraunos.swreset', '1'); } catch { /* 済 */ }
+        if (!tried) { for (const r of await sw.getRegistrations()) await r.unregister(); location.reload(); await new Promise(() => {}); }
+      }
+      // 訳の表を読む前なので、日本語の端末以外は英語で出す（spec REQ-016）
+      if (i === 60) document.getElementById('loading')?.insertAdjacentText('beforeend', /^ja/i.test(navigator.language || '') ? ' 読み込みに時間がかかっています。再読み込みしてください。' : ' Loading is taking a while. Please reload the page.');
+    }
+    try { sessionStorage.removeItem('keraunos.swreset'); } catch { /* 済 */ }
+  }
+  await import('./src/boot.js');
+  const loading = document.getElementById('loading');
+  const timer = setInterval(() => {
+    if (window.__demo && window.__demo.ready) {
+      loading.classList.add('hide');
+      clearInterval(timer);
+    }
+  }, 120);
+</script>
+</body>
+</html>

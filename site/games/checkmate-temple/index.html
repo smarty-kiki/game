@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>将死圣殿 · Checkmate Temple</title>
+<meta name="description" content="一座供奉国际象棋的封闭神殿。沉重的石制棋子、一个看不见的对手，以及藏在棋局中的出路。">
+<meta name="theme-color" content="#14100c">
+<!--
+  Mirrored by PLAY/ARCHIVE · 玩者档案 (https://game.yao-yang.cn/), a non-commercial game archive.
+  Original game: https://checkmate-temple.vercel.app/
+  All rights remain with the original author. Takedown contact: 378031327@qq.com
+-->
+<meta name="author" content="PLAY/ARCHIVE · 玩者档案">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PLAY/ARCHIVE · 玩者档案">
+<meta property="og:url" content="https://game.yao-yang.cn/games/checkmate-temple/">
+<link rel="canonical" href="https://game.yao-yang.cn/games/checkmate-temple/">
+<meta property="og:title" content="将死圣殿 · Checkmate Temple">
+<meta property="og:description" content="一座供奉国际象棋的封闭神殿。沉重的石制棋子、一个看不见的对手，以及藏在棋局中的出路。">
+<meta property="og:image" content="https://game.yao-yang.cn/games/checkmate-temple/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="烛光中的石制神殿与巨大的国际象棋棋盘。">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="将死圣殿 · Checkmate Temple">
+<meta name="twitter:description" content="一座供奉国际象棋的封闭神殿。沉重的石制棋子、一个看不见的对手，以及藏在棋局中的出路。">
+<meta name="twitter:image" content="https://game.yao-yang.cn/games/checkmate-temple/og.jpg">
+<meta name="twitter:image:alt" content="烛光中的石制神殿与巨大的国际象棋棋盘。">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preload" href="Cinzel-title.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  html, body { margin: 0; height: 100%; background: #070504; overflow: hidden; color: #d8cdb8; font-family: "Palatino Linotype", Palatino, Georgia, "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", serif; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: none; overscroll-behavior: none; }
+  canvas { display: block; touch-action: none; }
+  .layer { position: fixed; inset: 0; pointer-events: none; }
+  #fade { background: #000; opacity: 1; transition: opacity 2.5s ease; z-index: 5; }
+  @font-face { font-family: "Cinzel Title"; src: url(Cinzel-title.woff2) format("woff2"); font-weight: 900; font-style: normal; font-display: block; }
+  /* THE LOADING SCREEN. Everything it needs is in this file, so it is on screen before any big file or main.js arrives: a small blurred
+     still of the title view (inline, made by tools\code2_still.py), the title, a rank of eight squares that fills with the bytes that
+     have really arrived, a line that changes, and two plain notes. When the scene is ready the still fades into it and the rank
+     gives way to ENTER in the same place. */
+  #loadbg { z-index: 9; overflow: hidden; background: #070504; transition: opacity 3.6s ease-in-out; }
+  #loadbg i { position: absolute; inset: 0; background: /*LOADSTILL*/url(data:image/jpeg;base64,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)/*END*/ center/cover no-repeat; filter: blur(7px); animation: lbreathe 9s ease-in-out infinite alternate; }
+  @keyframes lbreathe { from { opacity: 0.86; } to { opacity: 1; } }
+  #slot { position: relative; height: 56px; width: 100%; display: flex; align-items: center; justify-content: center; }
+  #rank { display: flex; gap: 5px; transition: opacity 0.9s ease; }
+  #rank i { display: block; position: relative; width: 26px; height: 26px; box-sizing: border-box; border: 1px solid rgba(176,152,104,0.7); background: rgba(10,7,4,0.6); overflow: hidden; }
+  #rank i::before { content: ""; position: absolute; inset: 0; transform-origin: left center; transform: scaleX(var(--f, 0)); background: #e6d9ba; transition: transform 0.3s linear; }
+  #rank i:nth-child(even)::before { background: #8d6c3c; }
+  #rank i.now { animation: lnow 1.8s ease-in-out infinite; }
+  @keyframes lnow { 0%, 100% { box-shadow: 0 0 0 rgba(232,200,136,0); border-color: rgba(160,138,92,0.5); } 50% { box-shadow: 0 0 12px rgba(232,200,136,0.55); border-color: rgba(232,200,136,0.95); } }
+  #pct { font-size: 11px; letter-spacing: 0.24em; color: #8f8573; margin-top: 8px; height: 13px; padding-left: 0.24em; transition: opacity 0.9s ease; font-variant-numeric: tabular-nums; }
+  #note { font-size: 11px; letter-spacing: 0.16em; color: #7d7464; margin-top: 12px; height: 13px; white-space: nowrap; }
+  .touch #note .kb { display: none; }
+  #title.loading #start, #title.failed #start { opacity: 0; pointer-events: none; }
+  #title.ready #rank, #title.ready #pct, #title.ready #loadtxt { opacity: 0; }
+  #title.failed #rank { opacity: 0.25; } #title.failed #pct { opacity: 0; } #title.failed #rank i.now { animation: none; }
+  @media (prefers-reduced-motion: reduce) { #loadbg i, #rank i.now { animation: none; } #rank i::before { transition: none; } #loadbg { transition: opacity 0.6s linear; } #loadtxt { transition: none !important; } }
+  #title { z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: calc(max(7vh, env(safe-area-inset-bottom)) + 136px + 3.2vh); box-sizing: border-box; pointer-events: auto; text-align: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.0) 26%, rgba(0,0,0,0.0) 48%, rgba(0,0,0,0.8) 66%, rgba(0,0,0,0.88) 100%); transition: opacity 1.8s ease; }
+  #title .orig { font-family: "Cinzel Title", Cinzel, "Trajan Pro", "Palatino Linotype", Palatino, Georgia, serif; font-weight: 900; font-size: clamp(10px, 1.1vw, 14px); line-height: 1; letter-spacing: 0.5em; padding-left: 0.5em; color: #a08a5c; margin-bottom: 12px; white-space: nowrap; }
+  #title h1 { font-family: "Songti SC", "STSong", "Noto Serif CJK SC", "Source Han Serif SC", "Cinzel Title", Cinzel, "Palatino Linotype", Palatino, Georgia, serif; font-weight: 700; font-size: clamp(30px, 7.2vw, 132px); line-height: 1.05; letter-spacing: 0.1em; margin: 0 0 0 0.1em; color: #f0e2c4; white-space: nowrap; }
+  #title .foot { position: absolute; bottom: max(7vh, env(safe-area-inset-bottom)); left: 0; right: 0; display: flex; flex-direction: column; align-items: center; }
+  #start { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); transition: opacity 1.1s ease 0.3s; white-space: nowrap; font: inherit; font-size: 18px; letter-spacing: 0.4em; padding: 15px 46px 15px 52px; color: #fbf3e0; background: rgba(10,7,4,0.72); border: 1px solid #a08a5c; cursor: pointer; }
+  #start:hover { background: rgba(90,60,24,0.75); border-color: #e8c888; }
+  #start:disabled { opacity: 0.6; cursor: default; }
+  #loadtxt { font-size: 14px; font-style: italic; letter-spacing: 0.08em; color: #b9ad94; margin-top: 12px; height: 18px; white-space: nowrap; transition: opacity 0.7s ease; }
+  #prompt { z-index: 4; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 13vh; font-size: 17px; letter-spacing: 0.12em; color: #d9cba9; text-shadow: 0 0 8px #000, 0 0 2px #000; opacity: 0; transition: opacity 0.35s; }
+  #sub { z-index: 4; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6vh; font-size: 15px; font-style: italic; letter-spacing: 0.06em; color: #b9ad94; text-shadow: 0 0 6px #000, 0 0 2px #000; opacity: 0; transition: opacity 0.6s; }
+  #status { z-index: 4; display: flex; align-items: flex-start; justify-content: center; padding-top: 7vh; font-size: 22px; letter-spacing: 0.5em; font-style: italic; color: #e4d3ad; text-shadow: 0 0 12px #000; opacity: 0; transition: opacity 1.2s; }
+  #read { z-index: 6; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s; }
+  #read div { max-width: min(560px, 80vw); padding: 26px 34px; background: rgba(8,6,4,0.82); border: 1px solid #4a3f2e; text-align: center; }
+  #read h3 { font-weight: normal; font-style: italic; font-size: 14px; letter-spacing: 0.14em; color: #8f8573; margin: 0 0 14px; }
+  #read p { font-size: clamp(15px, 2.4vh + 6px, 20px); line-height: 1.6; margin: 0; white-space: pre-line; color: #e2d6bd; }
+  #end { z-index: 12; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; opacity: 0; transition: opacity 3s; }
+  #end.white { background: #e9e6df; color: #2a2620; }
+  #end h1 { font-weight: normal; letter-spacing: 0.3em; font-size: clamp(22px, 4vw, 54px); margin: 0 0 26px 0.3em; }
+  #end p { font-size: clamp(14px, 2vw, 19px); line-height: 1.9; max-width: 640px; margin: 0 20px; font-style: italic; }
+  #end small { margin-top: 40px; font-size: 13px; letter-spacing: 0.2em; opacity: 0.7; pointer-events: auto; }
+  #dot { z-index: 3; display: flex; align-items: center; justify-content: center; } #dot i { width: 3px; height: 3px; border-radius: 50%; background: rgba(230,215,180,0.55); }
+  #mute { position: fixed; right: max(16px, env(safe-area-inset-right)); top: max(14px, env(safe-area-inset-top)); z-index: 11; pointer-events: auto; font: inherit; font-size: 12px; letter-spacing: 0.2em; color: #b8ab90; background: rgba(0,0,0,0.4); border: 1px solid #5a4e3a; padding: 6px 10px; cursor: pointer; }
+  #help { position: fixed; left: max(18px, env(safe-area-inset-left)); bottom: max(14px, env(safe-area-inset-bottom)); z-index: 4; font-size: 13px; letter-spacing: 0.08em; color: #b8ab90; line-height: 1.8; opacity: 0; transition: opacity 2s; text-shadow: 0 0 6px #000, 0 0 2px #000; pointer-events: none; }
+  #nogl, #rotate { display: none; position: fixed; inset: 0; z-index: 20; background: #000 url(og.jpg) center/cover no-repeat; align-items: flex-end; justify-content: center; }
+  #rotate { background: rgba(0,0,0,0.62); align-items: center; z-index: 30; pointer-events: auto; }
+  #rotate div { margin: 0 24px; }
+  @media (orientation: portrait) and (pointer: coarse) { #rotate { display: flex; } }
+  html, body { -webkit-tap-highlight-color: transparent; position: fixed; inset: 0; width: 100%; }
+  .touch #mute { padding: 12px 14px; }
+  /* phones: a small "more" button beside the sound switch opens a one-item menu; beginning again takes that tap, then two more */
+  #more { display: none; position: fixed; right: calc(max(16px, env(safe-area-inset-right)) + 128px); top: max(14px, env(safe-area-inset-top)); z-index: 11; pointer-events: auto; font: inherit; font-size: 12px; letter-spacing: 0.2em; color: #b8ab90; background: rgba(0,0,0,0.4); border: 1px solid #5a4e3a; padding: 12px 13px 12px 15px; }
+  #menu { display: none; position: fixed; right: max(16px, env(safe-area-inset-right)); top: calc(max(14px, env(safe-area-inset-top)) + 52px); z-index: 11; pointer-events: auto; }
+  #again { font: inherit; font-size: 12px; letter-spacing: 0.2em; color: #d8cdb8; background: rgba(8,6,4,0.86); border: 1px solid #5a4e3a; padding: 14px 16px; min-width: 190px; }
+  #again.sure { color: #fbf3e0; border-color: #c9a86a; background: rgba(60,36,12,0.9); }
+  .touch.playing #more { display: block; } .touch.playing #menu.open { display: block; }
+  .touch #act { min-width: 132px; min-height: 56px; font-size: 16px; }
+  .touch #help { font-size: 12px; max-width: 60vw; left: max(18px, env(safe-area-inset-left)); bottom: auto; top: max(12px, env(safe-area-inset-top)); line-height: 1.6; }
+  .touch #dot { display: none; }
+  .touch #prompt { padding-bottom: 9vh; font-size: 15px; }
+  .touch #start { padding: 17px 50px 17px 56px; }
+  @media (max-height: 480px) { #title { padding-bottom: calc(max(5vh, env(safe-area-inset-bottom)) + 128px + 2vh); } #title h1 { font-size: clamp(24px, 6.3vw, 124px); } #title .foot { bottom: max(5vh, env(safe-area-inset-bottom)); } #read div { padding: 16px 22px; } #end h1 { margin-bottom: 12px; } #end small { margin-top: 16px; } }
+  #nogl div, #rotate div { background: rgba(0,0,0,0.8); padding: 22px 26px; margin: 0 0 8vh; max-width: 520px; text-align: center; font-size: 17px; line-height: 1.6; }
+  #nogl b { display: block; font-size: 30px; letter-spacing: 0.08em; margin-bottom: 8px; color: #fbf3e0; }
+  #stick { position: fixed; z-index: 4; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%; border: 1px solid rgba(230,215,180,0.35); display: none; pointer-events: none; }
+  #stick i { position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; margin: -22px; border-radius: 50%; background: rgba(230,215,180,0.25); }
+  #act { position: fixed; z-index: 7; right: max(22px, env(safe-area-inset-right)); bottom: max(22px, env(safe-area-inset-bottom)); display: none; pointer-events: auto; font: inherit; font-size: 15px; letter-spacing: 0.14em; color: #fbf3e0; background: rgba(20,14,8,0.7); border: 1px solid #a08a5c; border-radius: 40px; padding: 16px 22px; }
+  
+</style>
+<link rel="modulepreload" href="./vendor/three/three.module.js">
+<link rel="modulepreload" href="./vendor/rapier.es.js">
+<link rel="modulepreload" href="./vendor/chess.js">
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/three.module.js",
+  "three/addons/": "./vendor/three/addons/",
+  "@dimforge/rapier3d-compat": "./vendor/rapier.es.js",
+  "chess.js": "./vendor/chess.js"
+} }
+</script>
+</head>
+<body>
+<div id="fade" class="layer"></div>
+<div id="dot" class="layer"><i></i></div>
+<div id="status" class="layer"></div>
+<div id="prompt" class="layer"></div>
+<div id="sub" class="layer"></div>
+<div id="read" class="layer"><div><h3></h3><p></p></div></div>
+<div id="help"></div>
+<div id="end" class="layer"><h1></h1><p></p><small></small></div>
+<div id="loadbg" class="layer"><i></i></div>
+<div id="title" class="layer loading">
+  <div class="orig">CHECKMATE TEMPLE</div>
+  <h1>将死圣殿</h1>
+  <div class="foot">
+    <div id="slot">
+      <div id="rank" role="progressbar" aria-label="载入中" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <button id="start" disabled>进入</button>
+    </div>
+    <div id="loadtxt">棋盘正在摆好。</div>
+    <div id="pct">0%</div>
+    <div id="note">建议佩戴耳机<span class="kb"> &middot; 键盘与鼠标</span></div>
+  </div>
+</div>
+<button id="mute">开启声音</button>
+<button id="more" aria-label="菜单">&middot;&middot;&middot;</button>
+<div id="menu"><button id="again">重新开始</button></div>
+<div id="stick"><i></i></div>
+<button id="act"></button>
+<div id="rotate"><div>请把手机横过来。<br>神殿比它的高度更宽阔。</div></div>
+<div id="nogl"><div><b>将死圣殿</b>一座第一人称的 3D 神殿游戏。这个浏览器无法绘制它（需要 WebGL 2）。请用 Safari 或 Chrome 打开，或在电脑上尝试。</div></div>
+<script>
+  (function () { var c = document.createElement('canvas'); var ok = !!(window.WebGL2RenderingContext && c.getContext('webgl2')); if (!ok) { document.getElementById('nogl').style.display = 'flex'; document.getElementById('title').style.display = 'none'; document.getElementById('loadbg').style.display = 'none'; window.__noplay = true; } })();
+</script>
+<script>
+// The big files start downloading here, at once, alongside the code. main.js picks them up from window.__L.
+// Asset names come from what the bake writes: "files" in assets/lm.json and "assets" in assets/temple.json when present; otherwise the usual names, trying other image formats if one is missing.
+window.__L = (function () {
+  var L = { got: {}, size: {}, failed: false, onprog: null, soft: {} };
+  L.touch = /[?&]mobile/.test(location.search) || (matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches);
+  var wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  var uniq = function (a) { return a.filter(function (x, i) { return x && a.indexOf(x) === i; }); };
+  L.fail = function (e) {
+    if (L.failed) return; L.failed = true; try { console.error(e); } catch (x) { }
+    var t = document.getElementById('loadtxt'), s = document.getElementById('start'), T = document.getElementById('title');
+    if (T) { T.classList.remove('ready'); T.classList.add('failed'); } if (t) { t.textContent = '载入失败。刷新页面再试一次。'; t.style.opacity = 1; } if (s) { s.textContent = '未能载入'; s.disabled = true; }
+  };
+  // ---- the loading screen's moving parts. Progress is real: bytes arrived over bytes expected for the big files (sizes from the
+  // server's answers; an estimate until a size is known, or when a response gives none), which fills the rank to 86 %. The rest is
+  // the building of the scene, reported by main.js with L.ui.stage(). Between reports the rank creeps a little, so it is never still.
+  if (L.touch) document.documentElement.classList.add('touch');
+  L.ui = (function () {
+    var $ = function (id) { return document.getElementById(id); }, T = $('title'), rank = $('rank'), sq = rank.children, pct = $('pct'), mood = $('loadtxt'), bg = $('loadbg');
+    var still = matchMedia('(prefers-reduced-motion: reduce)').matches, target = 0, shown = 0, tT = performance.now(), done = false;
+    var EST = L.touch ? { temple: 5.6e6, pieces: 0.6e6, lm: 0.2e6 } : { temple: 10.9e6, pieces: 0.95e6, lm: 0.5e6 }, ATL = 7;
+    var LINES = ['棋盘正在摆好。', '烛火已经点亮。', '沙漏尚未开始流泻。', '石头记得每一局棋。', '有什么正等你落子。', '棋子比看上去更沉。'], li = 0;
+    function bytes() { var g = 0, n = 0, keys = ['temple', 'pieces'], i, k, e, s;
+      if (L.atl) for (i = 0; i < L.atl.length; i++) keys.push('lm_' + L.atl[i]); else for (i = 0; i < ATL; i++) keys.push('lm_?' + i);
+      for (i = 0; i < keys.length; i++) { k = keys[i]; e = EST[k] || EST.lm; s = L.size[k] || Math.max(e, (L.got[k] || 0) * 1.02); n += s; g += Math.min(L.got[k] || 0, s); }
+      return n ? g / n : 0; }
+    function aim(v) { if (v > target + 0.0005) { target = Math.min(1, v); tT = performance.now(); } }
+    function draw() { var v = shown * 8, i, f; for (i = 0; i < 8; i++) { f = Math.max(0, Math.min(1, v - i)); sq[i].style.setProperty('--f', f.toFixed(3)); sq[i].className = !done && !L.failed && f < 1 && v >= i ? 'now' : ''; }
+      var p = Math.floor(shown * 100 + 0.001); pct.textContent = p + '%'; rank.setAttribute('aria-valuenow', p); }
+    function tick() { if (done || L.failed) { draw(); return; }
+      var cap = Math.min(0.995, target + Math.min(0.035, (performance.now() - tT) * 0.000004));          // the creep: up to 3.5 % past the last real figure, over about nine seconds
+      shown = still ? target : shown + (cap - shown) * 0.07; if (shown > 0.995) shown = 0.995; draw(); if (still) setTimeout(tick, 400); else requestAnimationFrame(tick); }
+    L.onprog = function () { aim(0.86 * bytes()); };
+    setInterval(function () { if (done || L.failed) return; var next = function () { li = (li + 1) % LINES.length; mood.textContent = LINES[li]; mood.style.opacity = 1; };
+      if (still) next(); else { mood.style.opacity = 0; setTimeout(function () { if (!done && !L.failed) next(); }, 750); } }, 4600);
+    tick();
+    return { stage: function (v) { aim(v); },
+      ready: function () { if (L.failed) return; done = true; shown = 1; draw(); T.classList.remove('loading'); T.classList.add('ready'); mood.style.opacity = '';
+        setTimeout(function () { bg.style.opacity = 0; setTimeout(function () { bg.style.display = 'none'; }, 2600); }, 120); },
+      get shown() { return shown; }, get target() { return target; } };
+  })();
+  function once(url, key, json) {            // one attempt; gives up if nothing arrives for 25 s
+    var ac = window.AbortController ? new AbortController() : null, stall;
+    var arm = function () { clearTimeout(stall); stall = setTimeout(function () { if (ac) ac.abort(); }, 25000); }; arm();
+    return fetch(url, ac ? { signal: ac.signal } : {}).then(function (r) {
+      if (!r.ok) throw new Error(url + ' ' + r.status);
+      if (json) return r.json();
+      var len = +r.headers.get('content-length') || 0; if (len && !r.headers.get('content-encoding')) L.size[key] = len;
+      var type = r.headers.get('content-type') || '';
+      if (!r.body || !r.body.getReader) return r.blob();
+      var rd = r.body.getReader(), parts = [], n = 0;
+      return (function pump() { return rd.read().then(function (x) { if (x.done) return new Blob(parts, { type: type }); parts.push(x.value); n += x.value.length; L.got[key] = n; arm(); if (L.onprog) L.onprog(); return pump(); }); })();
+    }).then(function (v) { clearTimeout(stall); return v; }, function (e) { clearTimeout(stall); throw e; });
+  }
+  // try each candidate name in turn; the whole list gets one more go after a pause; then the plain message (unless soft: a missing extra is not fatal)
+  L.any = function (key, names, opt) {
+    opt = opt || {}; var dir = opt.dir === undefined ? './assets/' : opt.dir;
+    var all = function () { return names.reduce(function (p, n) { return p.catch(function () { L.got[key] = 0; return once(dir + n, key, opt.json); }); }, Promise.reject(new Error('no name for ' + key))); };
+    var p = all().catch(function () { return wait(1200).then(all); });
+    if (!opt.soft) p.catch(L.fail);
+    return p;
+  };
+  if (window.__noplay) return L;
+  L.site = L.any('site', ['site.json'], { json: true, dir: './', soft: true }).catch(function () { return { title: '将死圣殿' }; });
+  L.data = L.any('data', ['temple.json'], { json: true }); L.lmInfo = L.any('lmInfo', ['lm.json'], { json: true });
+  L.bin = Promise.all([L.data, L.lmInfo]).then(function (a) {
+    var as = a[0].assets || {}, files = a[1].files || {}, bin = {};
+    // phones: the lighter set, when the bake has written one ("mobile" in assets and in lm.json); until then the full files are decoded small
+    if (L.touch) { var am = as.mobile || {}, fm = (a[1].mobile || {}).files || {}, k; L.mobileSet = !!(am.temple || Object.keys(fm).length); as = Object.assign({}, as, am); files = Object.assign({}, files, fm); }
+    L.assets = as; L.atl = Object.keys(files).length ? Object.keys(files) : ['board', 'floor', 'walls', 'vault', 'columns', 'idols', 'props'];
+    L.lmNames = function (k) { return uniq([files[k], 'lm_' + k + '.webp', 'lm_' + k + '.jpg', 'lm_' + k + '.png']); };
+    bin.pieces = L.any('pieces', uniq([as.pieces, 'pieces.glb']));
+    L.atl.forEach(function (k) { bin['lm_' + k] = L.any('lm_' + k, L.lmNames(k)); });
+    bin.temple = L.any('temple', uniq([as.temple, 'temple.glb']));
+    return bin;
+  });
+  L.bin.catch(function () { });
+  return L;
+})();
+</script>
+<script type="module">if (!window.__noplay) import('./main.js').catch(e => { window.__L.fail(e); });</script>
+</body>
+</html>

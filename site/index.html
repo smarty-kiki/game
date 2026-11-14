@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>PLAY/ARCHIVE · 玩者档案 — 一个 AI 网页游戏档案馆</title>
-  <meta name="description" content="PLAY/ARCHIVE 玩者档案是一个非商业的 AI 网页游戏档案馆，持续收录由 AI 参与创作、打开浏览器就能玩的游戏。无广告、无内购、不以盈利为目的；如有侵权，联系即删。现已收录《瞎逼玩3A大作》《星夜骑手》《雾锁山门》《灯落荒原》《拼布小国》《油彩漫步》《恐龙狂奔》。">
+  <meta name="description" content="PLAY/ARCHIVE 玩者档案是一个非商业的 AI 网页游戏档案馆，持续收录由 AI 参与创作、打开浏览器就能玩的游戏。无广告、无内购、不以盈利为目的；如有侵权，联系即删。现已收录《瞎逼玩3A大作》《星夜骑手》《雾锁山门》《灯落荒原》《拼布小国》《油彩漫步》《恐龙狂奔》《晚祷》《雷霆航线》《将死圣殿》《无声山谷》《黄金时刻》。">
   <meta name="author" content="PLAY/ARCHIVE">
   <meta name="theme-color" content="#08090a">
   <meta name="color-scheme" content="dark">
@@ -102,6 +102,56 @@
           hero: "world-07-hero",
           coord: "落日 / 沙海狂奔 / 007—∞",
         },
+        {
+          slug: "games/evensong/",
+          num: "008",
+          genre: "SUNKEN CATHEDRAL / SOULS-LIKE DUEL",
+          name: "晚祷",
+          title: "晚祷",
+          desc: "沉没的大教堂里，与溺亡唱诗班的领唱决一死战。",
+          hero: "world-08-hero",
+          coord: "暮色 / 沉没教堂 / 008—∞",
+        },
+        {
+          slug: "games/keraunos/",
+          num: "009",
+          genre: "SPACE COMBAT / WEBGPU",
+          name: "雷霆<span>航线</span>",
+          title: "雷霆航线",
+          desc: "驾驶战机穿过沉舰坟场，突入敌方前线基地，与机械巨蛇决一死战。",
+          hero: "world-09-hero",
+          coord: "雷霆 / 沉舰坟场 / 009—∞",
+        },
+        {
+          slug: "games/checkmate-temple/",
+          num: "010",
+          genre: "CHESS TEMPLE / FIRST-PERSON PUZZLE",
+          name: "将死<span>圣殿</span>",
+          title: "将死圣殿",
+          desc: "抬起沉重的石制棋子，与看不见的对手对弈，在棋局与沙漏之间寻找出路。",
+          hero: "world-10-hero",
+          coord: "烛火 / 石砌棋殿 / 010—∞",
+        },
+        {
+          slug: "games/unsung-vale/",
+          num: "011",
+          genre: "UNSUNG VALE / OPEN-WORLD ACTION RPG",
+          name: "无声<span>山谷</span>",
+          title: "无声山谷",
+          desc: "歌声沉寂的山谷里，循着余音走过九座庭院，为三座歌塔调音。",
+          hero: "world-11-hero",
+          coord: "余音 / 歌声山谷 / 011—∞",
+        },
+        {
+          slug: "games/golden-hour/",
+          num: "012",
+          genre: "SOLSTICE HOTEL / FIRST-PERSON 5V5 TDM",
+          name: "黄金<span>时刻</span>",
+          title: "黄金时刻",
+          desc: "在日落时分的空中酒店里端起枪，打一场 5v5 团队死斗。",
+          hero: "world-12-hero",
+          coord: "日落 / 索尔蒂斯酒店 / 012—∞",
+        },
       ];
 
       const key = "play-archive-featured";
@@ -155,7 +205,7 @@
         <a href="#rights"><span>03</span>联系</a>
       </nav>
 
-      <a class="header-play" href="games/dino/" target="_blank" rel="noopener" aria-label="立即游玩《恐龙狂奔》，在新标签页打开">
+      <a class="header-play" href="games/golden-hour/" target="_blank" rel="noopener" aria-label="立即游玩《黄金时刻》，在新标签页打开">
         <span>立即游玩</span>
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" fill="none" stroke="currentColor" stroke-width="1.3"/></svg>
       </a>
@@ -166,13 +216,13 @@
     <section class="hero" aria-labelledby="hero-title" data-hero>
       <div class="hero-media" aria-hidden="true">
         <picture>
-          <source data-hero-source media="(max-width: 760px)" srcset="assets/world-07-hero-960.webp">
+          <source data-hero-source media="(max-width: 760px)" srcset="assets/world-12-hero-960.webp">
           <img data-hero-image src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" width="1600" height="900" alt="" fetchpriority="high" decoding="async">
         </picture>
         <noscript>
           <picture>
-            <source media="(max-width: 760px)" srcset="assets/world-07-hero-960.webp">
-            <img src="assets/world-07-hero.webp" width="1600" height="900" alt="">
+            <source media="(max-width: 760px)" srcset="assets/world-12-hero-960.webp">
+            <img src="assets/world-12-hero.webp" width="1600" height="900" alt="">
           </picture>
         </noscript>
       </div>
@@ -212,12 +262,12 @@
         <aside class="hero-teaser" aria-label="当前收录作品">
           <div class="teaser-head">
             <span>FEATURED WORLD</span>
-            <span class="teaser-number">007</span>
+            <span class="teaser-number">012</span>
           </div>
-          <a class="teaser-link" href="games/dino/" target="_blank" rel="noopener" aria-label="进入《恐龙狂奔》，在新标签页打开">
-            <p class="teaser-genre">DINO RUN / LOCKED IN</p>
-            <p class="teaser-name">恐龙<span>狂奔</span></p>
-            <p class="teaser-desc">一头四肢各有想法的恐龙，在落日沙漠里停不下来。</p>
+          <a class="teaser-link" href="games/golden-hour/" target="_blank" rel="noopener" aria-label="进入《黄金时刻》，在新标签页打开">
+            <p class="teaser-genre">SOLSTICE HOTEL / FIRST-PERSON 5V5 TDM</p>
+            <p class="teaser-name">黄金时刻</p>
+            <p class="teaser-desc">在日落时分的空中酒店里端起枪，打一场 5v5 团队死斗。</p>
             <span class="teaser-play">
               <span class="teaser-play-icon" aria-hidden="true">
                 <svg viewBox="0 0 16 16"><path d="M5 3.5 12 8l-7 4.5Z" fill="currentColor"/></svg>
@@ -235,13 +285,13 @@
             <span>SCROLL / 向下探索</span>
           </a>
           <p class="hero-disclaimer">NO ADS · NO PAYWALL · 不以盈利为目的</p>
-          <p class="hero-coord" aria-hidden="true">落日 / 沙海狂奔 / 007—∞</p>
+          <p class="hero-coord" aria-hidden="true">日落 / 索尔蒂斯酒店 / 012—∞</p>
         </div>
       </div>
     </section>
 
     <script>
-      // Swap the static Dino fallback for this visit's featured world.
+      // Swap the static Golden Hour fallback for this visit's featured world.
       (() => {
         const world = window.__PLAY_FEATURED__;
         if (!world) return;
@@ -303,7 +353,7 @@
           <p class="section-kicker"><span class="section-index">01</span><span>THE ARCHIVE</span><span class="section-sep" aria-hidden="true">/</span><span>已归档的世界</span></p>
           <div class="archive-title-row">
             <h2 id="archive-title">先玩点什么<span class="accent-dot">。</span></h2>
-            <p class="section-intro">这里收录由 AI 参与创作、可以直接在浏览器里玩的游戏。<br>目前 7 个世界已开放，之后会持续增加。</p>
+            <p class="section-intro">这里收录由 AI 参与创作、可以直接在浏览器里玩的游戏。<br>目前 12 个世界已开放，之后会持续增加。</p>
           </div>
         </div>
 
@@ -622,9 +672,234 @@
           </div>
         </article>
 
+        <article class="world-card" aria-labelledby="world-08-title" data-reveal>
+          <a class="world-visual" href="games/evensong/" target="_blank" rel="noopener" aria-label="进入《晚祷》，在新标签页打开">
+            <img src="assets/world-08-hud.webp" width="1440" height="810" alt="《晚祷》中，象牙色盔甲的领唱立于沉没大教堂的烛海之上" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 008</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / CATHEDRAL DUEL</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 008</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-08-title">晚祷</h3>
+            <p class="world-subtitle">SUNKEN CATHEDRAL · SOULS-LIKE DUEL</p>
+            <p class="world-desc">沉没的大教堂里，与溺亡唱诗班的领唱决一死战。格挡、翻滚，在烛火与管风琴之间寻找出手的间隙——一场能在浏览器里直接游玩的魂系短篇。中文汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>魂系</span><span>决斗</span><span>3D</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>3D 动作</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 手柄 / 触屏</dd></div>
+              <div><dt>大小</dt><dd>约 55 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/evensong/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 55 MB · 支持手柄与触屏</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-09-title" data-reveal>
+          <a class="world-visual" href="games/keraunos/" target="_blank" rel="noopener" aria-label="进入《雷霆航线》，在新标签页打开">
+            <img src="assets/world-09-hud.webp" width="1440" height="810" alt="《雷霆航线》中，战机穿过沉舰坟场，前方是巨大的环形前线基地" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 009</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / WARPATH</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 009</span>
+              <span>2026 / WEBGPU</span>
+            </div>
+
+            <h3 class="world-title" id="world-09-title">雷霆航线</h3>
+            <p class="world-subtitle">KERAUNOS · SPACE COMBAT</p>
+            <p class="world-desc">驾驶战机穿过小行星带与沉舰坟场，潜入敌方前线基地，与机械巨蛇决一死战。WebGPU 渲染出环形基地、行星巨影与密集弹幕，中文界面与字幕的汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>空战</span><span>射击</span><span>3D</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>3D 空战射击</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 触屏</dd></div>
+              <div><dt>大小</dt><dd>约 235 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/keraunos/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 235 MB · 建议使用支持 WebGPU 的 Chrome / Edge</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-10-title" data-reveal>
+          <a class="world-visual" href="games/checkmate-temple/" target="_blank" rel="noopener" aria-label="进入《将死圣殿》，在新标签页打开">
+            <img src="assets/world-10-hud.webp" width="1440" height="810" alt="《将死圣殿》中，烛火照亮巨大的石制棋盘与棋子" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 010</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / CHECKMATE TEMPLE</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 010</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-10-title">将死圣殿</h3>
+            <p class="world-subtitle">CHECKMATE TEMPLE · FIRST-PERSON PUZZLE</p>
+            <p class="world-desc">一座供奉国际象棋的封闭神殿。抬起沉重的石制棋子，与看不见的对手对弈，在棋局与沙漏之间寻找出路。中文界面、铭文与字幕的汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>解谜</span><span>国际象棋</span><span>3D</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>第一人称解谜</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 触屏</dd></div>
+              <div><dt>大小</dt><dd>约 33 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/checkmate-temple/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 33 MB · 支持键鼠与触屏 · 建议佩戴耳机</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-11-title" data-reveal>
+          <a class="world-visual" href="games/unsung-vale/" target="_blank" rel="noopener" aria-label="进入《无声山谷》，在新标签页打开">
+            <img src="assets/world-11-hud.webp" width="1440" height="810" alt="《无声山谷》中，身穿红衣的持剑者站在白色石砌庭院里，远处是巨大的环状歌塔" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 011</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / UNSUNG VALE</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 011</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-11-title">无声<span>山谷</span></h3>
+            <p class="world-subtitle">UNSUNG VALE · THIRD-PERSON OPEN-WORLD ACTION RPG</p>
+            <p class="world-desc">歌声沉寂的山谷。循着余音走过九座庭院，为三座歌塔调音，与盘踞其间的缄默者交锋。一片全由代码生成、可以自由行走的第三人称开放世界。中文界面、字幕与全部剧情文本的汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>动作角色扮演</span><span>开放世界</span><span>第三人称</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>第三人称动作角色扮演</dd></div>
+              <div><dt>操作</dt><dd>键鼠 / 手柄</dd></div>
+              <div><dt>大小</dt><dd>约 39 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/unsung-vale/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 39 MB · 支持键鼠与手柄 · 建议佩戴耳机</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="world-card" aria-labelledby="world-12-title" data-reveal>
+          <a class="world-visual" href="games/golden-hour/" target="_blank" rel="noopener" aria-label="进入《黄金时刻》，在新标签页打开">
+            <img src="assets/world-12-hud.webp" width="1440" height="810" alt="《黄金时刻》中，玩家手持步枪站在索尔蒂斯酒店的高层落地窗前，窗外是日落与城市天际线" loading="lazy" decoding="async">
+            <span class="world-badge"><i aria-hidden="true"></i>现在可玩</span>
+            <span class="world-entry">ENTRY 012</span>
+            <span class="world-caption" aria-hidden="true"><i></i>IN-GAME CAPTURE / GOLDEN HOUR</span>
+            <span class="world-play" aria-hidden="true">
+              <svg viewBox="0 0 16 16"><path d="M5 3.2 12.8 8 5 12.8Z" fill="currentColor"/></svg>
+              <span>PLAY</span>
+            </span>
+          </a>
+
+          <div class="world-info">
+            <div class="world-overline">
+              <span>WORLD NO. 012</span>
+              <span>2026 / WEBGL</span>
+            </div>
+
+            <h3 class="world-title" id="world-12-title">黄金<span>时刻</span></h3>
+            <p class="world-subtitle">GOLDEN HOUR · SOLSTICE HOTEL · FIRST-PERSON TDM</p>
+            <p class="world-desc">日落时分的空中酒店，一场 5v5 团队死斗。随机的配装、带后坐力的枪械、能自主猎杀的 K9 军犬，先拿到 40 分的一方获胜。中文界面、HUD、武器与结算文本的汉化镜像。</p>
+
+            <div class="world-tags" aria-label="游戏标签">
+              <span>射击</span><span>团队死斗</span><span>第一人称</span><span>单人</span>
+            </div>
+
+            <dl class="world-specs">
+              <div><dt>类型</dt><dd>第一人称团队死斗</dd></div>
+              <div><dt>操作</dt><dd>键鼠（指针锁定）</dd></div>
+              <div><dt>大小</dt><dd>约 4.4 MB</dd></div>
+            </dl>
+
+            <div class="world-actions">
+              <a class="btn btn-primary btn-block" href="games/golden-hour/" target="_blank" rel="noopener">
+                <span>进入世界</span>
+                <span class="btn-tail">
+                  <span class="btn-en">PLAY NOW</span>
+                  <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="1.35"/></svg>
+                </span>
+              </a>
+              <p class="world-note">在新标签页打开 · 完整游戏约 4.4 MB · 仅支持键盘鼠标，不支持触屏 · 单人对抗 5v5 机器人</p>
+            </div>
+          </div>
+        </article>
+
         <aside class="archive-next" data-reveal>
           <div class="next-mark" aria-hidden="true">
-            <span>008</span>
+            <span>013</span>
             <i></i>
             <span>∞</span>
           </div>
@@ -722,10 +997,10 @@
           </div>
         </div>
 
-        <a class="final-world" href="games/dino/" target="_blank" rel="noopener" data-reveal aria-label="进入《恐龙狂奔》，在新标签页打开">
+        <a class="final-world" href="games/golden-hour/" target="_blank" rel="noopener" data-reveal aria-label="进入《黄金时刻》，在新标签页打开">
           <span class="final-world-copy">
-            <span class="final-world-label">WORLD 007 IS WAITING</span>
-            <span class="final-world-title">去玩 <span>恐龙狂奔</span></span>
+            <span class="final-world-label">WORLD 012 IS WAITING</span>
+            <span class="final-world-title">去玩 <span>黄金时刻</span></span>
           </span>
           <span class="final-world-arrow" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8.5 7H17v8.5" fill="none" stroke="currentColor" stroke-width="1.25"/></svg>

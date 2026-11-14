@@ -1,0 +1,15 @@
+{
+  "name": "雷霆航线 · KERAUNOS",
+  "short_name": "雷霆航线",
+  "description": "驾驶战机穿越小行星带，潜入敌方前线基地，与机械大蛇决一死战。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#03040b",
+  "theme_color": "#03040b",
+  "icons": [
+    { "src": "./icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
