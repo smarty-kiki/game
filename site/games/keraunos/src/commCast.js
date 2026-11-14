@@ -78,10 +78,11 @@ export const LINES = [
   { id: 'o_snk_p3', who: 'shion', face: 't', text: 'あと少し！ 頭を狙え。光線は主砲で押し返せ' },
   { id: 'o_snk_down', who: 'shion', face: 't', text: '大蛇の動きが止まった！ 離れて！', voice: 'だいじゃの動きが止まった！ 離れて！' },
   // レールガンを積んでいるとき（主砲が無く押し合えない）。溜めている口を撃ち抜くと光線が止まる（spec REQ-015）
-  { id: 'o_snk_brief_r', who: 'shion', face: 'n', text: '背中の砲台は壊せる。口の光線は、溜めている口をレールガンで撃ち抜けば止められる' },
-  { id: 'o_snk_counter_r', who: 'shion', face: 't', text: '口が光ってる！ 撃たれる前にレールガンで撃ち抜け！' },
-  { id: 'o_snk_p3_r', who: 'shion', face: 't', text: 'あと少し！ 頭を狙え。光線はレールガンで撃ち抜いて止めろ' },
-  { id: 'o_snk_snipe', who: 'shion', face: 's', text: '撃ち抜いた！ 光線が止まったぞ！' },
+  // このミラーにはこの4行の音声が含まれていない（d/ に該当の .ogg が無い）。字幕だけを出し、404 を避ける。
+  { id: 'o_snk_brief_r', who: 'shion', face: 'n', noVoice: true, text: '背中の砲台は壊せる。口の光線は、溜めている口をレールガンで撃ち抜けば止められる' },
+  { id: 'o_snk_counter_r', who: 'shion', face: 't', noVoice: true, text: '口が光ってる！ 撃たれる前にレールガンで撃ち抜け！' },
+  { id: 'o_snk_p3_r', who: 'shion', face: 't', noVoice: true, text: 'あと少し！ 頭を狙え。光線はレールガンで撃ち抜いて止めろ' },
+  { id: 'o_snk_snipe', who: 'shion', face: 's', noVoice: true, text: '撃ち抜いた！ 光線が止まったぞ！' },
   // ルカ
   { id: 'l_boss_snk', who: 'luka', face: 's', text: '二人とも付いてる。大蛇の頭を集中して叩くぞ！', voice: '二人とも付いてる。だいじゃの頭を集中して叩くぞ！' },
   { id: 'l_join', who: 'luka', face: 's', text: 'こっちも付いていく。金属の輪を3つくぐれば、ツインを強化できるぞ' },

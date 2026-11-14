@@ -82,7 +82,7 @@ export function createComm({ root, audio }) {
     sayEl.textContent = '';
     commT = 2.4 + item.text.length * 0.07;
     if (audio) audio.cue('commIn');
-    if (item.line && audio && (audio.canVoice ?? audio.ready)) {
+    if (item.line && !item.line.noVoice && audio && (audio.canVoice ?? audio.ready)) {
       const mine = cur;
       audio.playVoice(VOICE_URL(item.line.id)).then((h) => {
         if (!h) return;

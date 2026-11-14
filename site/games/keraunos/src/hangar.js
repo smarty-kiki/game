@@ -766,7 +766,7 @@ export async function openHangar() {
     }
     $('hgGo').addEventListener('click', go);
     // 通信の声を、格納庫にいる間に台詞の表の順で先に取っておく（出撃後の最初の台詞から声が乗るように）
-    import('./commCast.js').then(({ LINES }) => audio.prefetchVoices(LINES.map((l) => `./assets/voice/${l.id}.ogg`))).catch(() => {});
+    import('./commCast.js').then(({ LINES }) => audio.prefetchVoices(LINES.filter((l) => !l.noVoice).map((l) => `./assets/voice/${l.id}.ogg`))).catch(() => {});
 
     render();
     loadWeaponModels(loader).then((m) => {
