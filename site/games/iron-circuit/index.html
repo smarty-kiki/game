@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<!--
+  铁甲环道 · Iron Circuit
+  Original game: https://patch.gg/play/dfg/iron-circuit by @dfg (https://patch.gg/@dfg)
+  Non-commercial static mirror hosted by PLAY/ARCHIVE · 玩者档案.
+  The build was published through Patch; the iframe-only Patch host wrapper is not part of the game
+  and was removed for this standalone mirror. Gameplay, rendering and interface are unchanged apart
+  from the Chinese localization.
+  All code, art and audio remain with their original authors.
+  Takedown contact: 378031327@qq.com.
+-->
+  <meta charset="utf-8">
+  <title>铁甲环道 · Iron Circuit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="五辆怪物卡车，三圈废料场赛道，车上装着机枪。用任何手段冲过终点。">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#171c1b">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="https://game.yao-yang.cn/games/iron-circuit/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PLAY/ARCHIVE · 玩者档案">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:title" content="铁甲环道 · Iron Circuit">
+  <meta property="og:description" content="五辆怪物卡车，三圈废料场赛道，车上装着机枪。用任何手段冲过终点。">
+  <meta property="og:url" content="https://game.yao-yang.cn/games/iron-circuit/">
+  <meta property="og:image" content="https://game.yao-yang.cn/assets/world-15-hero.webp">
+  <meta property="og:image:type" content="image/webp">
+  <meta property="og:image:width" content="1600">
+  <meta property="og:image:height" content="900">
+  <meta property="og:image:alt" content="俯视视角下的废料场环形赛道，五辆涂装各异的怪物卡车挤在起点后的第一个弯道，赛道中央散落着废铁与轮胎。">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="铁甲环道 · Iron Circuit">
+  <meta name="twitter:description" content="五辆怪物卡车，三圈废料场赛道，车上装着机枪。用任何手段冲过终点。">
+  <meta name="twitter:image" content="https://game.yao-yang.cn/assets/world-15-hero.webp">
+  <meta name="twitter:image:alt" content="俯视视角下的废料场环形赛道，五辆涂装各异的怪物卡车挤在起点后的第一个弯道，赛道中央散落着废铁与轮胎。">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">{"imports":{"three":"./vendor/three.module.js"}}</script>
+</head>
+<body>
+<noscript>
+  <style>#loading,#hud,#menu,#minimap{display:none!important}</style>
+  <div class="noscript">
+    <h1>铁甲环道</h1>
+    <p>一场废料场里的怪物卡车竞速，在你的浏览器中实时绘制。</p>
+    <p>这个游戏需要 JavaScript 与 WebGL。请开启 JavaScript，然后重新加载页面。</p>
+  </div>
+</noscript>
+<div id="loading" role="status">正在搭建赛道…</div>
+<div id="hud">
+  <header>
+    <div class="brand">铁甲<span>环道</span><small>废料场大奖赛</small></div>
+    <div class="raceinfo"><b id="lap">第 1 / 3 圈</b><span id="time">00:00.00</span></div>
+    <button id="sound" type="button">声音：关</button>
+    <button id="pause" type="button">暂停 Ⅱ</button>
+  </header>
+  <aside id="standings" aria-label="比赛名次"></aside>
+  <div id="notice" aria-live="polite"></div>
+  <footer>
+    <div class="instrument">
+      <small>装甲</small>
+      <div class="bar"><i id="health"></i></div>
+      <small id="healthText">100%</small>
+    </div>
+    <div class="speed"><b id="speed">0</b><small>公里/时</small></div>
+    <div class="instrument">
+      <small>氮气 / SHIFT</small>
+      <div class="bar nitro"><i id="nitro"></i></div>
+      <small>机枪 / 空格</small>
+    </div>
+  </footer>
+  <div class="help">WASD / 方向键 · 驾驶　空格 · 射击　SHIFT · 氮气　R · 归位　ESC · 暂停</div>
+</div>
+<div id="menu" class="veil">
+  <section>
+    <div class="eyebrow">没有干净的胜利</div>
+    <h1>铁甲<br><em>环道</em></h1>
+    <p>五辆怪物卡车，三圈赛道。<br>不惜一切手段冲过终点。</p>
+    <button id="start" class="primary" type="button">进入比赛 <span>→</span></button>
+    <div class="instructions">
+      <span><b>WASD / ↑↓←→</b>油门与转向</span>
+      <span><b>空格</b>机枪</span>
+      <span><b>SHIFT</b>氮气加速</span>
+    </div>
+    <small>绿色补给箱修复装甲 · 橙色补给箱补充氮气<br>损毁的卡车会回到赛道，并损失时间。</small>
+    <small class="keyboard-note">需要键盘游玩 · 不支持触屏。</small>
+    <button id="creditsButton" class="textbutton" type="button">制作名单</button>
+    <div id="credits" hidden></div>
+  </section>
+</div>
+<canvas id="minimap" width="240" height="190" aria-hidden="true"></canvas>
+<script type="module" src="game.js"></script>
+</body>
+</html>

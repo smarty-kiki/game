@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <!--
+      彩绘山谷 · Painted valley
+      Original game: https://git.patch.gg/blendi/painted-valley (project blendi/painted-valley, version 1.1.1)
+      Made by Patch. Code MIT; the art it draws is CC0 1.0. See CREDITS.md, LICENCE-NOTES.md and LICENSE.txt.
+      Non-commercial static mirror hosted by PLAY/ARCHIVE · 玩者档案.
+      The Patch host helper is inert outside the Patch page; the game makes no cross-origin requests.
+      Only the interface text is localized; gameplay, art, code and audio remain unchanged.
+      Takedown contact: 378031327@qq.com.
+    -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>彩绘山谷 · Painted valley</title>
+    <meta name="theme-color" content="#dfeaf0" />
+    <meta name="description" content="《彩绘山谷》—— 一座夏日的山谷，以手绘动画电影背景的笔触绘成。沿着草坡走向村庄、河畔与山间小湖，在正午至日落之间随意漫步。" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://game.yao-yang.cn/games/painted-valley/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PLAY/ARCHIVE · 玩者档案" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content="彩绘山谷 · Painted valley" />
+    <meta property="og:description" content="《彩绘山谷》—— 一座夏日的山谷，以手绘动画电影背景的笔触绘成。沿着草坡走向村庄、河畔与山间小湖，在正午至日落之间随意漫步。" />
+    <meta property="og:url" content="https://game.yao-yang.cn/games/painted-valley/" />
+    <meta property="og:image" content="https://game.yao-yang.cn/assets/world-17-hero.webp" />
+    <meta property="og:image:type" content="image/webp" />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="900" />
+    <meta property="og:image:alt" content="夏日山谷的手绘风景：草坡上站着戴草帽、披蓝斗篷的漫游者，远处是红瓦村庄与白云下的群山。" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="彩绘山谷 · Painted valley" />
+    <meta name="twitter:description" content="《彩绘山谷》—— 一座夏日的山谷，以手绘动画电影背景的笔触绘成。沿着草坡走向村庄、河畔与山间小湖，在正午至日落之间随意漫步。" />
+    <meta name="twitter:image" content="https://game.yao-yang.cn/assets/world-17-hero.webp" />
+    <meta name="twitter:image:alt" content="夏日山谷的手绘风景：草坡上站着戴草帽、披蓝斗篷的漫游者，远处是红瓦村庄与白云下的群山。" />
+    <style>html,body{color:#24323a;-webkit-user-select:none;user-select:none;background:#dfeaf0;height:100%;margin:0;font:15px/1.4 Georgia,Times New Roman,Songti SC,Noto Serif CJK SC,Source Han Serif SC,SimSun,serif;overflow:hidden}canvas{width:100%;height:100%;display:block}#loading,#start{letter-spacing:.06em;pointer-events:none;place-items:center;display:grid;position:fixed;inset:0}#loading{background:#dfeaf0}#start{color:#fff;text-shadow:0 1px 10px #1432508c;align-content:end;padding-bottom:9vh;display:none}#start b{font-size:19px;font-weight:400;display:block}#start span{opacity:.85;text-align:center;margin-top:4px;font-size:13px;display:block}#note{text-align:center;letter-spacing:.06em;color:#fff;text-shadow:0 1px 10px #1432508c;opacity:0;pointer-events:none;font-size:19px;transition:opacity .6s;position:fixed;top:7vh;left:0;right:0}#note.on{opacity:1;transition:opacity .15s}.ready:not(.playing) #start{display:grid}</style>
+    <script type="module" crossorigin src="./assets/index-DoESfuRm.js"></script>
+  </head>
+  <body>
+    <canvas id="view"></canvas>
+    <div id="start">
+      <div>
+        <b>点击开始漫步</b>
+        <span>W A S D 移动 · Shift 疾跑 · Alt 慢走 · 空格 跳跃 · V 第一人称 · T 切换时刻</span>
+      </div>
+    </div>
+    <div id="note"></div>
+    <div id="loading">彩绘山谷</div>
+  </body>
+</html>

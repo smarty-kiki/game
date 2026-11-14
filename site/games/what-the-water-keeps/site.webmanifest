@@ -1,0 +1,29 @@
+{
+  "name": "水中所藏 · What the water keeps",
+  "short_name": "水中所藏",
+  "description": "一段缓慢的夜航。提灯的小船穿过八个截然不同的地方，或随水流前行，或亲自掌舵。",
+  "lang": "zh-CN",
+  "start_url": ".",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#05060c",
+  "theme_color": "#05060c",
+  "icons": [
+    {
+      "src": "assets/share/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/share/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/share/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<!--
+  飞蛾与灯 · Moth & Lantern
+  Original game: https://games.jimmychandra.com/games/moth_and_lantern/
+  Made by Jimmy Chandra (https://x.com/jchandra) with programmer/art/music credits to Fable 5.2.
+  Levels: Microban by David W. Skinner (2000), used unchanged with thanks.
+  Non-commercial static mirror hosted by PLAY/ARCHIVE · 玩者档案.
+  The original host page's navigation script and Cloudflare Pages Analytics beacon were removed for
+  this standalone mirror; the game itself is unchanged apart from the Chinese localization.
+  All code, art and audio remain with their original authors.
+  Takedown contact: 378031327@qq.com.
+-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0d1330">
+<meta name="description" content="《飞蛾与灯》——一款安静的推灯谜题：在一座座漂浮于雾中的夜之庭园里，帮助小飞蛾把每盏灯笼推上石台。">
+<title>飞蛾与灯 · Moth &amp; Lantern</title>
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://game.yao-yang.cn/games/moth-and-lantern/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PLAY/ARCHIVE · 玩者档案">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="飞蛾与灯 · Moth &amp; Lantern">
+<meta property="og:description" content="《飞蛾与灯》——一款安静的推灯谜题：在一座座漂浮于雾中的夜之庭园里，帮助小飞蛾把每盏灯笼推上石台。">
+<meta property="og:url" content="https://game.yao-yang.cn/games/moth-and-lantern/">
+<meta property="og:image" content="https://game.yao-yang.cn/assets/world-16-hero.webp">
+<meta property="og:image:type" content="image/webp">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta property="og:image:alt" content="俯瞰一座漂浮在雾海上的夜之庭园：发光的飞蛾停在石径间，纸灯笼倒映着微光，等待被推上石台。">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="飞蛾与灯 · Moth &amp; Lantern">
+<meta name="twitter:description" content="《飞蛾与灯》——一款安静的推灯谜题：在一座座漂浮于雾中的夜之庭园里，帮助小飞蛾把每盏灯笼推上石台。">
+<meta name="twitter:image" content="https://game.yao-yang.cn/assets/world-16-hero.webp">
+<meta name="twitter:image:alt" content="俯瞰一座漂浮在雾海上的夜之庭园：发光的飞蛾停在石径间，纸灯笼倒映着微光，等待被推上石台。">
+<link rel="stylesheet" href="src/ui/ui.css">
+<link rel="stylesheet" href="src/ui/panels.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three/build/three.module.js" } }</script>
+</head>
+<body>
+<canvas id="stage" aria-label="飞蛾与灯的游戏画面"></canvas>
+<div id="vignette" aria-hidden="true"></div>
+
+<div id="ui">
+  <header id="hud">
+    <div class="hud-level">
+      <span class="eyebrow">庭园</span>
+      <div class="hud-row">
+        <button class="chev" data-act="prev" aria-label="上一座庭园" data-tip="上一座" data-key="["></button>
+        <button class="hud-num" data-act="levels" aria-label="选择庭园" data-tip="庭园" data-key="L"><span id="hud-num">1</span><span class="of">/155</span></button>
+        <button class="chev" data-act="next" aria-label="下一座庭园" data-tip="下一座" data-key="]"></button>
+      </div>
+      <span class="hud-name" id="hud-name"></span>
+    </div>
+    <div class="hud-stats">
+      <div class="lamps" id="hud-lamps" aria-label="已点亮的灯笼"></div>
+      <div class="counts"><span><b id="hud-moves">0</b> 步</span><span><b id="hud-pushes">0</b> 推</span><span id="hud-best" class="best"></span></div>
+    </div>
+  </header>
+
+  <nav id="dock" aria-label="控制">
+    <!-- One list in reading (and Tab) order. Desktop shows it as one pill. On touch layouts ui.js moves the
+         buttons marked data-tray into the tray, which opens from "More". -->
+    <div class="bar" id="dock-bar">
+      <button data-act="undo" data-tip="撤销" data-key="Z" aria-label="撤销"></button>
+      <button data-act="reset" data-tip="重来" data-key="R" aria-label="重新开始这座庭园"></button>
+      <span class="turn" role="group" aria-label="转动视角">
+        <button data-act="rotl" data-tip="左转" data-key="Q" aria-label="向左转动视角"></button>
+        <button data-act="rotr" data-tip="右转" data-key="E" aria-label="向右转动视角"></button>
+        <span class="lbl" aria-hidden="true">转动</span>
+      </span>
+      <button data-act="view" data-tip="视角" data-key="V" aria-label="切换视角"></button>
+      <button data-act="zoomout" data-tray data-tip="缩小" data-key="−" aria-label="缩小"></button>
+      <button data-act="zoomin" data-tray data-tip="放大" data-key="+" aria-label="放大"></button>
+      <button data-act="levels" data-tip="庭园" data-key="L" aria-label="选择庭园"></button>
+      <button data-act="sound" data-tray data-tip="声音" data-key="M" aria-label="声音开关"></button>
+      <button data-act="help" data-tray data-tip="帮助" data-key="?" aria-label="帮助与鸣谢"></button>
+      <button data-act="more" class="only-touch" data-tip="更多" aria-label="更多控制" aria-haspopup="true" aria-expanded="false"></button>
+    </div>
+    <div class="tray" id="tray">
+      <button data-act="prev" class="only-touch" data-tip="上一座" aria-label="上一座庭园"></button>
+      <button data-act="next" class="only-touch" data-tip="下一座" aria-label="下一座庭园"></button>
+    </div>
+  </nav>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="hint" role="status" aria-live="polite"></div>
+
+  <div id="title" aria-hidden="true">
+    <div class="title-mark">飞蛾 <i>与</i> 灯</div>
+    <div class="title-sub">一百五十五座夜之庭园</div>
+  </div>
+
+  <div id="win" role="status" aria-live="polite">
+    <div class="win-eyebrow" id="win-eyebrow">庭园 1</div>
+    <div class="win-title">灯笼尽亮</div>
+    <div class="win-stats" id="win-stats"></div>
+    <div class="win-hint" id="win-hint">按任意键前往下一座庭园</div>
+  </div>
+
+  <div id="scrim"></div>
+
+  <section id="panel-levels" class="panel" role="dialog" aria-modal="true" aria-label="选择庭园" tabindex="-1">
+    <div class="grab" aria-hidden="true"></div>
+    <div class="panel-head">
+      <div>
+        <h2>庭园</h2>
+        <p class="sub" id="levels-sub">已点亮 0 / 155</p>
+      </div>
+      <div class="progress" aria-hidden="true"><span id="levels-bar"></span></div>
+      <div class="jump" id="levels-jump" aria-live="polite"></div>
+      <button class="close" data-act="close" aria-label="关闭"></button>
+    </div>
+    <div class="levels-body">
+      <div class="rail">
+        <nav class="stretches" id="levels-stretches" aria-label="小径的分段"></nav>
+        <p class="legend">输入数字即可跳转</p>
+      </div>
+      <div class="path" id="levels-grid" role="listbox" aria-label="庭园" tabindex="-1"></div>
+      <aside class="preview" id="preview">
+        <canvas id="preview-map" width="440" height="330" aria-hidden="true"></canvas>
+        <div class="preview-text">
+          <div class="preview-stretch" id="preview-stretch"></div>
+          <div class="preview-num"><span class="eyebrow">庭园</span><span id="preview-num">1</span></div>
+          <div class="preview-name" id="preview-name"></div>
+          <div class="preview-line" id="preview-line"></div>
+          <dl class="preview-facts">
+            <div><dt>尺寸</dt><dd id="preview-size"></dd></div>
+            <div><dt>灯笼</dt><dd id="preview-boxes"></dd></div>
+            <div><dt>最佳</dt><dd id="preview-best"></dd></div>
+          </dl>
+        </div>
+        <button class="sheet-close" data-act="close" data-icon="down" aria-label="关闭"></button>
+        <button class="go" id="preview-go"><span>进入<span class="go-more">庭园</span></span> <kbd>Enter</kbd></button>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Help and credits. The words live in src/ui/help-copy.js; ui.js fills the lists. -->
+  <section id="panel-help" class="panel" role="dialog" aria-modal="true" aria-label="帮助与鸣谢" tabindex="-1">
+    <div class="grab" aria-hidden="true"></div>
+    <div class="panel-head">
+      <div>
+        <h2>飞蛾 <i>与</i> 灯</h2>
+        <p class="sub" id="help-lead">把每一盏灯笼推到石台上。灯笼落位，就会亮起。</p>
+      </div>
+      <div class="switches" role="group" aria-label="声音">
+        <label class="switch"><input type="checkbox" id="opt-music"><span class="track"></span><span>音乐</span></label>
+        <label class="switch"><input type="checkbox" id="opt-sfx"><span class="track"></span><span>音效</span></label>
+      </div>
+      <button class="close" data-act="close" aria-label="关闭"></button>
+    </div>
+    <div class="help-body" id="help-body" tabindex="-1">
+      <div class="help-col">
+        <section class="h-keys">
+          <h3>按键</h3>
+          <dl class="keys" id="help-keys"></dl>
+        </section>
+      </div>
+      <div class="help-col">
+        <section class="h-touch">
+          <h3>触控</h3>
+          <ul class="gestures" id="help-gestures"></ul>
+          <p class="small" id="help-also"></p>
+          <p class="note" id="help-up"></p>
+        </section>
+        <section class="h-credits">
+          <h3>鸣谢</h3>
+          <div class="credits" id="help-credits">
+            <p>制作人兼导演：<a href="https://x.com/jchandra" target="_blank" rel="noopener noreferrer">Jimmy Chandra</a></p>
+            <p>程序与美术：<b>Fable 5.2</b></p>
+            <p>音乐与音效：<b>Fable 5.2</b></p>
+            <p>关卡：<b>Microban</b>，作者 <b>David W. Skinner</b>（2000），原样使用，谨致谢意。</p>
+            <p>图形引擎：<b>three.js</b>（MIT 许可）。</p>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="panel-foot"><button class="sheet-done" data-act="close" data-plain>完成</button></div>
+  </section>
+</div>
+
+<noscript><p style="color:#f3ecdf;font:16px/1.5 Georgia,serif;padding:2rem">《飞蛾与灯》需要 JavaScript 与 WebGL。</p></noscript>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

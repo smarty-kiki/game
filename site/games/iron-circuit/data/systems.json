@@ -1,0 +1,27 @@
+{
+  "race": {
+    "laps": 3,
+    "roadWidth": 19,
+    "countdown": 3,
+    "respawnSeconds": 2.5
+  },
+  "driving": {
+    "acceleration": 34,
+    "maxSpeed": 52,
+    "reverseSpeed": 16,
+    "steering": 2.15,
+    "drag": 0.55,
+    "offroadDrag": 2.6,
+    "grip": 5.5,
+    "boostPower": 33,
+    "boostDrain": 27,
+    "boostRegen": 8
+  },
+  "combat": {
+    "damage": 3,
+    "fireInterval": 0.16,
+    "bulletSpeed": 125,
+    "bulletLife": 0.85,
+    "pickupCooldown": 12
+  }
+}

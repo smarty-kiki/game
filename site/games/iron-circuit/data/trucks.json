@@ -1,0 +1,1 @@
+[{"id":"player","name":"你","color":"#f3a044","speed":1,"start":0},{"id":"vandal","name":"破坏者","color":"#d35b52","speed":0.91,"start":1},{"id":"razor","name":"剃刀","color":"#76a0ad","speed":0.94,"start":2},{"id":"maggot","name":"腐虫","color":"#9eaf64","speed":0.89,"start":3},{"id":"reaper","name":"收割者","color":"#ae8abd","speed":0.92,"start":4}]
